@@ -1,0 +1,969 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>การประเมินราคารถยนต์มือสอง โดยการเรียนรู้ของเครื่องแบบมีผู้สอน</title>
+<meta name="description" content="เรื่องเล่าแบบโต้ตอบจากการวิจัยการประเมินราคารถยนต์มือสองด้วย Decision Tree, Random Forest และ XGBoost">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<script src="js/data.js" defer></script>
+<script src="js/charts.js" defer></script>
+<script src="js/main.js" defer></script>
+</head>
+<body>
+
+<nav class="side-nav" id="side-nav" aria-label="ไปยังฉากต่างๆ"></nav>
+
+<main id="story">
+
+  <!-- ================= S0 HERO ================= -->
+  <section class="scene hero" id="s-hero" data-duration="8000" data-title="หน้าปก">
+    <div class="scene-inner">
+      <p class="hero-kicker reveal" style="--d:0">โครงงานวิจัย · การเรียนรู้ของเครื่องแบบมีผู้สอน</p>
+      <h1>
+        <span class="reveal" style="--d:150">การประเมินราคารถยนต์มือสอง</span><br>
+        <span class="accent reveal" style="--d:350">โดยการเรียนรู้ของเครื่อง</span><br>
+        <span class="reveal" style="--d:550">แบบมีผู้สอน</span>
+      </h1>
+      <p class="hero-sub reveal" style="--d:700">
+        จากราคาที่ผันผวน สู่ตัวแบบที่ช่วยประเมินราคากลางอย่างสมเหตุสมผล
+        เรื่องราวหนึ่งการเดินทางของข้อมูล 46,074 คัน
+      </p>
+
+      <div class="hero-car reveal" style="--d:500" aria-hidden="true">
+        <svg class="car-svg" viewBox="0 0 520 210">
+          <g class="car-body">
+            <rect x="70" y="112" width="350" height="46" rx="18" fill="#BBD9F2"/>
+            <path d="M120 112 L165 66 L320 66 L372 112 Z" fill="#DCEBF8" stroke="#BBD9F2" stroke-width="3"/>
+            <path d="M178 106 L200 78 L254 78 L254 106 Z" fill="#ffffff"/>
+            <path d="M266 78 L310 78 L345 106 L266 106 Z" fill="#ffffff"/>
+            <rect x="60" y="130" width="370" height="26" rx="13" fill="#2F80ED"/>
+            <rect x="100" y="138" width="54" height="9" rx="4.5" fill="#9CC8F5"/>
+            <rect x="380" y="128" width="34" height="12" rx="6" fill="#FFE2A8"/>
+            <circle class="car-wheel" cx="150" cy="166" r="22" fill="#17507F"/>
+            <circle class="car-wheel" cx="150" cy="166" r="9" fill="#DCEBF8"/>
+            <circle class="car-wheel" cx="352" cy="166" r="22" fill="#17507F"/>
+            <circle class="car-wheel" cx="352" cy="166" r="9" fill="#DCEBF8"/>
+            <g class="price-tag">
+              <rect x="330" y="16" width="168" height="52" rx="26" fill="#ffffff" stroke="#2F80ED" stroke-width="2"/>
+              <text x="414" y="40" text-anchor="middle" font-family="Prompt, sans-serif" font-size="13" fill="#17507F" font-weight="600">ราคาที่สมเหตุสมผล</text>
+              <text x="414" y="57" text-anchor="middle" font-family="Prompt, sans-serif" font-size="11" fill="#5B7086">จากข้อมูลจริง</text>
+            </g>
+          </g>
+          <line x1="24" y1="190" x2="496" y2="190" stroke="#BBD9F2" stroke-width="4" stroke-linecap="round" stroke-dasharray="16 16" class="road-dash"/>
+        </svg>
+      </div>
+
+      <div class="hero-meta reveal" style="--d:900">
+        <span>อาจารย์ที่ปรึกษา <strong>รองศาสตราจารย์ ดร.ธิดาพร ศุภภากร</strong></span>
+        <span>นำเสนอ <strong>2 พฤศจิกายน 2569</strong></span>
+      </div>
+      <button class="btn-primary reveal" id="hero-play" type="button" style="--d:1050" aria-label="เริ่มโหมดเล่นเรื่องราว">▶ เริ่มเล่าเรื่อง</button>
+      <p class="scroll-hint reveal" style="--d:1200">หรือเลื่อนลงเพื่ออ่านทีละฉาก</p>
+    </div>
+  </section>
+
+  <!-- ================= S1 MEMBERS ================= -->
+  <section class="scene" id="s-members" data-duration="7000" data-title="สมาชิกผู้จัดทำ">
+    <div class="scene-inner">
+      <p class="eyebrow reveal">ทีมผู้จัดทำ</p>
+      <h2 class="scene-title reveal" style="--d:80">เบื้องหลังข้อมูล 46,074 คัน</h2>
+      <p class="narration reveal" style="--d:160">
+        งานวิจัยนี้เกิดจากทีม 5 คนที่ช่วยกันตั้งแต่เก็บข้อมูล ทำความสะอาดข้อมูล ไปจนถึงสร้างเว็บแอปพลิเคชัน
+      </p>
+      <div class="members-grid" id="members-grid"></div>
+    </div>
+  </section>
+
+  <!-- ================= S2 BACKGROUND ================= -->
+  <section class="scene" id="s-background" data-duration="12000" data-title="ที่มาและความสำคัญ">
+    <div class="scene-inner">
+      <p class="eyebrow reveal">ที่มาและความสำคัญ</p>
+      <h2 class="scene-title reveal" style="--d:80">ราคารถมือสองไม่ได้นิ่ง</h2>
+      <p class="narration reveal" style="--d:160">
+        ดัชนีราคารถยนต์มือสองเปลี่ยนขึ้นลงตามเศรษฐกิจและปัจจัยรอบตัว
+        เราจึงอยากเข้าใจว่าอะไรทำให้ราคาแตกต่าง และช่วยให้ผู้ซื้อผู้ขายเห็นราคากลางที่สมเหตุสมผล
+      </p>
+      <p class="reveal" style="--d:240">
+        ปัจจุบันรถยนต์เข้ามามีบทบาทสำคัญต่อการดำเนินชีวิตและการประกอบอาชีพของคนไทยเป็นอย่างมาก
+        ซึ่งรถยนต์มือสองถือเป็นทางเลือกยอดนิยมเนื่องจากมีราคาเข้าถึงได้ง่ายและมีตัวเลือกหลากหลาย
+        อย่างไรก็ตาม ราคากลุ่มรถมือสองมักมีความผันผวนตามสภาวะเศรษฐกิจและปัจจัยรอบด้าน
+        เช่น ยี่ห้อ รุ่น ประเภทรถ ปีที่ผลิต และเลขไมล์ ฯลฯ
+      </p>
+      <div class="chart-card reveal" style="--d:360">
+        <div class="chart" id="price-chart" role="img" aria-label="กราฟเส้นดัชนีราคารถยนต์มือสอง ปี 2563 ถึง 2568"></div>
+        <p class="chart-caption">ดัชนีราคารถยนต์มือสอง พ.ศ. 2563–2568 · กำหนดปีฐาน พ.ศ. 2558 = 100</p>
+      </div>
+      <p class="chart-note reveal" style="--d:2300">
+        ที่มา: ดัชนีราคารถยนต์มือสอง ธนาคารแห่งประเทศไทย (2569) — สะท้อนถึงความผันผวนของราคาตามสภาวะตลาดและปัจจัยแวดล้อม
+        <br>*กำหนดปีฐาน (Base Year): กำหนดให้ปี พ.ศ. 2558 มีค่าดัชนีเท่ากับ 100
+      </p>
+    </div>
+  </section>
+
+  <!-- ================= S3 OBJECTIVES ================= -->
+  <section class="scene" id="s-objectives" data-duration="9000" data-title="วัตถุประสงค์">
+    <div class="scene-inner">
+      <p class="eyebrow reveal">วัตถุประสงค์ในการศึกษา</p>
+      <h2 class="scene-title reveal" style="--d:80">เราอยากตอบคำถามอะไร</h2>
+      <p class="narration reveal" style="--d:160">
+        สามคำถามนี้กำหนดทุกขั้นตอนของการศึกษา ตั้งแต่เลือกตัวแปร ไปจนถึงการสร้างเครื่องมือใช้งานจริง
+      </p>
+      <div class="objectives-grid">
+        <article class="objective-card reveal" style="--d:250">
+          <div class="obj-num">01</div>
+          <p>เพื่อศึกษาความสำคัญปัจจัยที่มีอิทธิพลต่อการประเมินราคารถยนต์มือสองในประเทศไทย</p>
+        </article>
+        <article class="objective-card reveal" style="--d:420">
+          <div class="obj-num">02</div>
+          <p>เพื่อเปรียบเทียบประสิทธิภาพในการประเมินราคารถยนต์มือสองของวิธี Decision Tree Regression, Random Forest Regression, XGBoost</p>
+          <div class="model-pills">
+            <span class="pill dt">Decision Tree</span>
+            <span class="pill rf">Random Forest</span>
+            <span class="pill xgb">XGBoost</span>
+          </div>
+        </article>
+        <article class="objective-card reveal" style="--d:590">
+          <div class="obj-num">03</div>
+          <p>เพื่อสร้าง Web Application ที่ใช้ตัวแบบที่มีประสิทธิภาพสูงสุด สำหรับประเมินราคากลางที่สมเหตุสมผลแก่ผู้ซื้อและผู้ขายรถยนต์มือสอง</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= S4 SCOPE ================= -->
+  <section class="scene" id="s-scope" data-duration="7000" data-title="ขอบเขตงานวิจัย">
+    <div class="scene-inner">
+      <p class="eyebrow reveal">ขอบเขตงานวิจัย</p>
+      <h2 class="scene-title reveal" style="--d:80">ทำที่ไหน ด้วยอะไร และนานแค่ไหน</h2>
+      <p class="narration reveal" style="--d:160">
+        ขอบเขตที่ชัดเจนช่วยให้รู้ว่าผลการศึกษานี้ครอบคลุมอะไร และนำไปใช้ต่อในบริบทใดได้บ้าง
+      </p>
+      <div class="info-grid">
+        <article class="info-card reveal" style="--d:260">
+          <span class="icon-badge" aria-hidden="true">📍</span>
+          <div>
+            <h4>สถานที่ทำการวิจัย</h4>
+            <p>ห้องปฏิบัติการคอมพิวเตอร์ ภาควิชาสถิติ คณะวิทยาศาสตร์ มหาวิทยาลัยเกษตรศาสตร์ และที่พักของผู้วิจัย</p>
+          </div>
+        </article>
+        <article class="info-card reveal" style="--d:400">
+          <span class="icon-badge" aria-hidden="true">⌨</span>
+          <div>
+            <h4>เครื่องมือที่ใช้</h4>
+            <p>โปรแกรมสำหรับการเขียน Python, Microsoft Excel และ Microsoft Word</p>
+          </div>
+        </article>
+        <article class="info-card reveal" style="--d:540">
+          <span class="icon-badge" aria-hidden="true">🗓</span>
+          <div>
+            <h4>ระยะเวลาดำเนินการ</h4>
+            <p>กรกฎาคม พ.ศ. 2569 – พฤศจิกายน พ.ศ. 2569 (ประมาณ 5 เดือน)</p>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= S5 BENEFITS ================= -->
+  <section class="scene" id="s-benefits" data-duration="7000" data-title="ประโยชน์ที่คาดว่าจะได้รับ">
+    <div class="scene-inner">
+      <p class="eyebrow reveal">ประโยชน์ที่คาดว่าจะได้รับ</p>
+      <h2 class="scene-title reveal" style="--d:80">ผลลัพธ์ที่จะได้จากงานนี้</h2>
+      <p class="narration reveal" style="--d:160">
+        งานนี้ไม่ได้หยุดที่ตัวเลขในรายงาน แต่ตั้งใจส่งมอบความรู้และเครื่องมือที่ใช้ตัดสินใจได้จริง
+      </p>
+      <div class="info-grid">
+        <article class="info-card reveal" style="--d:260">
+          <span class="icon-badge" aria-hidden="true">🔎</span>
+          <div>
+            <h4>เข้าใจปัจจัยสำคัญ</h4>
+            <p>ได้ทราบความสำคัญของปัจจัยที่มีอิทธิพลต่อราคารถยนต์มือสอง</p>
+          </div>
+        </article>
+        <article class="info-card reveal" style="--d:400">
+          <span class="icon-badge" aria-hidden="true">📊</span>
+          <div>
+            <h4>เปรียบเทียบตัวแบบ</h4>
+            <p>ได้ทราบผลการเปรียบเทียบประสิทธิภาพของแต่ละวิธีที่ใช้ในการวิเคราะห์</p>
+          </div>
+        </article>
+        <article class="info-card reveal" style="--d:540">
+          <span class="icon-badge" aria-hidden="true">🌐</span>
+          <div>
+            <h4>เครื่องมือใช้งานจริง</h4>
+            <p>ได้ Web Application สำหรับประเมินราคารถยนต์มือสอง</p>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= S6 FLOWCHART ================= -->
+  <section class="scene" id="s-flow" data-duration="14000" data-title="ขั้นตอนการทำงาน">
+    <div class="scene-inner">
+      <p class="eyebrow reveal">ภาพรวมการทำงาน</p>
+      <h2 class="scene-title reveal" style="--d:80">จากหน้าเว็บไซต์ถึงราคาประเมิน</h2>
+      <p class="narration reveal" style="--d:160">
+        ข้อมูลถูกแบ่งเป็นชุดฝึกและชุดทดสอบ แล้วเดินคู่ขนานกัน เพื่อให้ตรวจสอบได้ว่าตัวแบบทำงานกับข้อมูลใหม่ได้ดีจริง
+      </p>
+      <div class="flow">
+        <div class="flow-node strong reveal" style="--d:200">เริ่มต้น</div>
+        <div class="flow-arrow" style="--d:350" aria-hidden="true"></div>
+        <div class="flow-node reveal" style="--d:400">ดึงข้อมูลจากเว็บไซต์</div>
+        <div class="flow-arrow" style="--d:550" aria-hidden="true"></div>
+        <div class="flow-node reveal" style="--d:600">ทำความสะอาดข้อมูล</div>
+        <div class="flow-arrow" style="--d:750" aria-hidden="true"></div>
+        <div class="flow-node strong reveal" style="--d:800">แบ่งชุดข้อมูล 80 : 20</div>
+        <div class="flow-arrow" style="--d:1000" aria-hidden="true"></div>
+
+        <div class="flow-branches">
+          <div class="flow-col left">
+            <span class="flow-col-label reveal" style="--d:1100">ข้อมูลชุดฝึก 80%</span>
+            <div class="flow-node reveal" style="--d:1200">สร้างแบบจำลอง<br>Decision Tree Regression / Random Forest Regression / XGBoost</div>
+            <div class="flow-arrow" style="--d:1500" aria-hidden="true"></div>
+            <div class="flow-node reveal" style="--d:1600">ปรับจูนพารามิเตอร์ด้วย GridSearchCV<br>ร่วมกับ K-Fold Cross Validation</div>
+            <div class="flow-arrow" style="--d:1900" aria-hidden="true"></div>
+            <div class="flow-node strong reveal" style="--d:2000">ได้ตัวแบบแต่ละตัวที่ดีที่สุด</div>
+            <span class="flow-pass reveal" style="--d:2300">ส่งตัวแบบที่ดีที่สุดไปทางขวา</span>
+          </div>
+          <div class="flow-col right">
+            <span class="flow-col-label reveal" style="--d:2500">ข้อมูลชุดทดสอบ 20%</span>
+            <div class="flow-node reveal" style="--d:2600">ประเมินราคารถยนต์มือสองด้วยข้อมูลชุดทดสอบ<br>และดูค่าความสำคัญของตัวแปรด้วย Permutation Importance</div>
+            <div class="flow-arrow" style="--d:2800" aria-hidden="true"></div>
+            <div class="flow-node reveal" style="--d:2900">ประเมินประสิทธิภาพด้วย<br>R², MAE, MAPE และ RMSE</div>
+            <div class="flow-arrow" style="--d:3100" aria-hidden="true"></div>
+            <div class="flow-node strong reveal" style="--d:3200">สร้าง Web Application</div>
+          </div>
+        </div>
+
+        <div class="flow-arrow" style="--d:3700" aria-hidden="true"></div>
+        <div class="flow-node end reveal" style="--d:3800">สิ้นสุดการทำงาน</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= S7 RELATED WORK ================= -->
+  <section class="scene" id="s-related" data-duration="12000" data-title="งานวิจัยที่เกี่ยวข้อง">
+    <div class="scene-inner">
+      <p class="eyebrow reveal">งานวิจัยที่เกี่ยวข้อง</p>
+      <h2 class="scene-title reveal" style="--d:80">หกเรื่องที่เล่าให้เราฟังก่อนเริ่ม</h2>
+      <p class="narration reveal" style="--d:160">
+        งานก่อนหน้าช่วยบอกว่าตัวแปรแบบไหนมีประโยชน์ และตัวแบบใดเคยทำได้ดี
+        คลิกการ์ดเพื่อพลิกดูตัวแปรและวิธีการศึกษา
+      </p>
+      <div class="related-grid" id="related-grid"></div>
+      <div class="tally reveal" style="--d:900" id="related-tally"></div>
+      <p class="small muted reveal" style="--d:1000">นับจากผลการศึกษาของทั้ง 6 เรื่อง</p>
+    </div>
+  </section>
+
+  <!-- ================= S8 CHAPTER: METHOD ================= -->
+  <section class="scene chapter" id="s-chapter-method" data-duration="6000" data-title="ขั้นตอนการดำเนินการ">
+    <div class="scene-inner">
+      <div class="chapter-num tnum reveal">01</div>
+      <h2 class="reveal" style="--d:100">ขั้นตอนการดำเนินการ</h2>
+      <p class="narration reveal" style="--d:200">หกหัวข้อที่จะพาเราไปจากข้อมูลดิบ สู่ผลลัพธ์ที่ตีความได้</p>
+      <div class="chapter-pills">
+        <span class="reveal" style="--d:300">การเตรียมข้อมูล</span>
+        <span class="reveal" style="--d:380">ตัวแปรและวิธีที่ใช้ในการศึกษา</span>
+        <span class="reveal" style="--d:460">การแบ่งชุดข้อมูล</span>
+        <span class="reveal" style="--d:540">การปรับค่าไฮเปอร์พารามิเตอร์</span>
+        <span class="reveal" style="--d:620">การวัดค่าความคลาดเคลื่อน</span>
+        <span class="reveal" style="--d:700">ค่าความสำคัญของตัวแปร</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= S9 DATA PREP ================= -->
+  <section class="scene" id="s-data" data-duration="11000" data-title="การเตรียมข้อมูล">
+    <div class="scene-inner">
+      <p class="eyebrow reveal">การเตรียมข้อมูล</p>
+      <h2 class="scene-title reveal" style="--d:80">คัดกรองให้เหลือข้อมูลที่เชื่อถือได้</h2>
+      <p class="narration reveal" style="--d:160">
+        ข้อมูลจากสองเว็บไซต์ถูกนำมาทำความสะอาดตามเงื่อนไขเดียวกัน
+        เหลือ 46,074 คันที่พร้อมใช้วิเคราะห์
+      </p>
+
+      <div class="source-row">
+        <span class="source-badge reveal" style="--d:260">Kaidee.com</span>
+        <span class="source-badge reveal" style="--d:360">One2Car.com</span>
+      </div>
+
+      <div class="funnel-wrap">
+        <div class="funnel-drops" aria-hidden="true"></div>
+        <div class="funnel reveal" style="--d:450">ทำความสะอาดข้อมูล</div>
+        <div class="rules-stack">
+          <div class="rule-row reveal" style="--d:700"><span class="rule-icon" aria-hidden="true">✓</span>ลบข้อมูลซ้ำ</div>
+          <div class="rule-row reveal" style="--d:830"><span class="rule-icon" aria-hidden="true">✓</span>ลบข้อมูลที่มีค่าว่างหรือค่าผิดปกติ</div>
+          <div class="rule-row reveal" style="--d:960"><span class="rule-icon" aria-hidden="true">✓</span>ตัดรุ่นรถที่มีจำนวนน้อยกว่า 50 คัน</div>
+          <div class="rule-row reveal" style="--d:1090"><span class="rule-icon" aria-hidden="true">✓</span>ใช้ข้อมูลที่ตรงตามเงื่อนไข: อายุรถยนต์ 0-20 ปี, ระยะทางที่วิ่งหรือเลขไมล์ไม่เกิน 300,000, ขนาดเครื่องยนต์ 1000–3500 ซีซี</div>
+        </div>
+        <div class="n-result reveal" style="--d:1300">N = <span id="data-count" class="tnum">46,074</span>
+          <small>จำนวนรายการหลังทำความสะอาด · เก็บข้อมูลหน้าเว็บไซต์ล่าสุดวันที่ 30 กันยายน 2569</small>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= S10 VARIABLES ================= -->
+  <section class="scene" id="s-variables" data-duration="12000" data-title="ตัวแปรที่ใช้">
+    <div class="scene-inner">
+      <p class="eyebrow reveal">ตัวแปรและวิธีที่ใช้ในการศึกษา</p>
+      <h2 class="scene-title reveal" style="--d:80">แปดปัจจัยที่อธิบายราคา</h2>
+      <p class="narration reveal" style="--d:160">
+        ตัวแปรตามคือราคารถยนต์มือสอง ส่วนตัวแปรอิสระทั้งแปดคือสิ่งที่เราคาดว่าจะช่วยอธิบายความต่างของราคา
+      </p>
+      <div class="var-target reveal" style="--d:240">
+        <span>ตัวแปรตาม (Target)</span>
+        <strong>ราคารถยนต์มือสอง (บาท)</strong>
+      </div>
+      <div class="var-grid" id="variables-grid"></div>
+    </div>
+  </section>
+
+  <!-- ================= S11 METHODS ================= -->
+  <section class="scene" id="s-methods" data-duration="14000" data-title="วิธีการที่ใช้">
+    <div class="scene-inner">
+      <p class="eyebrow reveal">วิธีการที่ใช้ในการศึกษา</p>
+      <h2 class="scene-title reveal" style="--d:80">ต้นไม้หนึ่งต้น ป่ากับการแก้ข้อผิดพลาด</h2>
+      <p class="narration reveal" style="--d:160">
+        ทั้งสามวิธีใช้แนวคิดต้นไม้ตัดสินใจ แต่ต่างกันที่จำนวนต้นและการเรียนรู้จากข้อผิดพลาด
+        ภาพเล็กๆ ด้านล่างเป็นตัวอย่างเพื่อให้เห็นแนวคิด ไม่ใช่ผลการศึกษา
+      </p>
+      <div class="methods-grid">
+        <article class="method-card model-dt reveal" style="--d:260">
+          <span class="num">01</span>
+          <h3>Decision Tree Regression</h3>
+          <p class="method-desc">การทำนายผลโดยใช้โครงสร้างต้นไม้ตัดสินใจ ตัวแบบจะแบ่งข้อมูลออกเป็นกิ่งก้านตามเงื่อนไขต่างๆ เพื่อหาคำตอบ ทำให้เข้าใจกระบวนการทำงานได้ง่าย</p>
+          <div class="mini-stage">
+            <span class="demo-badge">ตัวอย่าง</span>
+            <div class="mini-tree">
+              <div class="tree-node" style="--d:200">อายุรถ ≤ 5 ปี?</div>
+              <div class="tree-branches">
+                <div class="tree-leaf">
+                  <div class="tree-node" style="--d:520">ใช่</div>
+                  <p>ราคาสูง</p>
+                </div>
+                <div class="tree-leaf">
+                  <div class="tree-node" style="--d:620">ไม่ใช่</div>
+                  <p>ราคาต่ำลง</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="method-card model-rf reveal" style="--d:420">
+          <span class="num">02</span>
+          <h3>Random Forest Regression</h3>
+          <p class="method-desc">ประยุกต์ใช้เทคนิคการเรียนรู้ที่สร้างจากต้นไม้ตัดสินใจหลายต้นร่วมกัน โดยมีการปรับแต่งค่าไฮเปอร์พารามิเตอร์ผ่าน GridSearchCV</p>
+          <div class="mini-stage">
+            <span class="demo-badge">ตัวอย่าง</span>
+            <div class="rf-stage">
+              <div class="tree-row">
+                <span class="tree-icon"><i></i><i></i><i></i><i></i></span>
+                <span class="tree-icon"><i></i><i></i><i></i><i></i></span>
+                <span class="tree-icon"><i></i><i></i><i></i><i></i></span>
+                <span class="tree-icon"><i></i><i></i><i></i><i></i></span>
+                <span class="tree-icon"><i></i><i></i><i></i><i></i></span>
+              </div>
+              <div class="bubble-row">
+                <span class="price-bubble" style="--d:1">ผลจากต้นที่ 1</span>
+                <span class="price-bubble" style="--d:2">ผลจากต้นที่ 2</span>
+                <span class="price-bubble" style="--d:3">ผลจากต้นที่ 3</span>
+                <span class="price-bubble" style="--d:4">ผลจากต้นที่ 4</span>
+                <span class="price-bubble" style="--d:5">ผลจากต้นที่ 5</span>
+              </div>
+              <span class="avg-bubble">รวมเป็นค่าเฉลี่ย</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="method-card model-xgb reveal" style="--d:580">
+          <span class="num">03</span>
+          <h3>XGBoost</h3>
+          <p class="method-desc">ตัวแบบต้นไม้ตัดสินใจที่ใช้เทคนิค Boosting โดยให้ต้นไม้ต้นใหม่คอยเรียนรู้และแก้ไขข้อผิดพลาดจากต้นไม้ต้นก่อนหน้า จัดการกับชุดข้อมูลที่มีความซับซ้อนได้เป็นอย่างดี</p>
+          <div class="mini-stage">
+            <span class="demo-badge">ตัวอย่าง</span>
+            <div class="xgb-stage">
+              <div class="xgb-trees">
+                <span class="tree-icon"><i></i><i></i><i></i><i></i></span>
+                <span class="tree-icon"><i></i><i></i><i></i><i></i></span>
+                <span class="tree-icon"><i></i><i></i><i></i><i></i></span>
+              </div>
+              <div class="resid-track"><div class="resid-fill"></div></div>
+              <span class="resid-caption">ข้อผิดพลาดเหลือน้อยลงหลังเพิ่มต้นไม้แต่ละต้น</span>
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= S12 SPLIT ================= -->
+  <section class="scene" id="s-split" data-duration="13000" data-title="การแบ่งชุดข้อมูล">
+    <div class="scene-inner">
+      <p class="eyebrow reveal">การแบ่งชุดข้อมูล</p>
+      <h2 class="scene-title reveal" style="--d:80">แบ่งชั้นก่อนสุ่ม เพื่อให้ตัวแทนครบทุกกลุ่ม</h2>
+      <p class="narration reveal" style="--d:160">
+        เราแบ่งข้อมูลแบบ Stratified Split โดยใช้รุ่นรถ (X3) เป็นตัวแปรแบ่งชั้น
+        เพื่อให้สัดส่วนของแต่ละรุ่นในชุดฝึกและชุดทดสอบใกล้เคียงกับข้อมูลจริง
+      </p>
+      <p class="small muted reveal" style="--d:220">
+        Step 1 Population → Step 2 Strata → Step 3 Random Selection → Step 4 Split
+        <span class="badge example" style="margin-left:.4em">ตัวอย่างเพื่ออธิบาย</span>
+      </p>
+
+      <div class="split-demo reveal" style="--d:320">
+        <div class="split-source" id="split-source" aria-label="ตัวอย่างข้อมูลก่อนแบ่งชุด"></div>
+        <div class="split-targets">
+          <div class="split-box train">
+            <h4>Training Set 80% <span>ใช้สร้างและปรับตัวแบบ</span></h4>
+            <div class="dot-target" id="split-train"></div>
+          </div>
+          <div class="split-box test">
+            <h4>Testing Set 20% <span>ใช้ประเมินข้อมูลใหม่</span></h4>
+            <div class="dot-target" id="split-test"></div>
+          </div>
+        </div>
+      </div>
+      <p class="chart-note reveal" style="--d:700">จุดสีต่างๆ คือตัวอย่างรถ 4 รุ่น (ตัวอย่าง) — จากแต่ละชั้น ประมาณ 80% ไปชุดฝึก และ 20% ไปชุดทดสอบ โดยรักษาสัดส่วนสีไว้</p>
+    </div>
+  </section>
+
+  <!-- ================= S13 TUNING ================= -->
+  <section class="scene" id="s-tuning" data-duration="12000" data-title="การปรับไฮเปอร์พารามิเตอร์">
+    <div class="scene-inner">
+      <p class="eyebrow reveal">การปรับไฮเปอร์พารามิเตอร์</p>
+      <h2 class="scene-title reveal" style="--d:80">ลองทุกจุด แล้วเลือกจุดที่ดีที่สุด</h2>
+      <p class="narration reveal" style="--d:160">
+        GridSearchCV ช่วยค้นหาชุดพารามิเตอร์ที่ดีที่สุดบนตารางค่า
+        ส่วน K-Fold Cross Validation ทำให้ผลที่ได้ไม่ขึ้นกับการแบ่งข้อมูลเพียงครั้งเดียว
+      </p>
+      <div class="tuning-grid">
+        <div class="reveal" style="--d:280">
+          <div class="section-head">
+            <h3>Grid Search</h3>
+            <span class="badge example">ตัวอย่าง</span>
+          </div>
+          <div class="grid-points" aria-hidden="true">
+            <span class="gp" style="--i:0"></span><span class="gp" style="--i:1"></span><span class="gp" style="--i:2"></span><span class="gp" style="--i:3"></span><span class="gp" style="--i:4"></span>
+            <span class="gp" style="--i:5"></span><span class="gp" style="--i:6"></span><span class="gp" style="--i:7"></span><span class="gp" style="--i:8"></span><span class="gp" style="--i:9"></span>
+            <span class="gp" style="--i:10"></span><span class="gp" style="--i:11"></span><span class="gp best" style="--i:12"></span><span class="gp" style="--i:13"></span><span class="gp" style="--i:14"></span>
+            <span class="gp" style="--i:15"></span><span class="gp" style="--i:16"></span><span class="gp" style="--i:17"></span><span class="gp" style="--i:18"></span><span class="gp" style="--i:19"></span>
+            <span class="gp" style="--i:20"></span><span class="gp" style="--i:21"></span><span class="gp" style="--i:22"></span><span class="gp" style="--i:23"></span><span class="gp" style="--i:24"></span>
+          </div>
+          <p class="floor-note">จุดสีเข้มคือค่าที่ให้ผลดีที่สุดบนตารางที่ลอง</p>
+        </div>
+
+        <div class="reveal" style="--d:420">
+          <div class="section-head">
+            <h3>K-Fold Cross Validation (K = 5)</h3>
+            <span class="badge example">ตัวอย่าง</span>
+          </div>
+          <div class="fold-panel">
+            <div class="fold-row">
+              <span class="fold-label">รอบที่ 1</span>
+              <span class="fold-block val"></span><span class="fold-block"></span><span class="fold-block"></span><span class="fold-block"></span><span class="fold-block"></span>
+              <span class="perf">Performance 1</span>
+            </div>
+            <div class="fold-row">
+              <span class="fold-label">รอบที่ 2</span>
+              <span class="fold-block"></span><span class="fold-block val"></span><span class="fold-block"></span><span class="fold-block"></span><span class="fold-block"></span>
+              <span class="perf">Performance 2</span>
+            </div>
+            <div class="fold-row">
+              <span class="fold-label">รอบที่ 3</span>
+              <span class="fold-block"></span><span class="fold-block"></span><span class="fold-block val"></span><span class="fold-block"></span><span class="fold-block"></span>
+              <span class="perf">Performance 3</span>
+            </div>
+            <div class="fold-row">
+              <span class="fold-label">รอบที่ 4</span>
+              <span class="fold-block"></span><span class="fold-block"></span><span class="fold-block"></span><span class="fold-block val"></span><span class="fold-block"></span>
+              <span class="perf">Performance 4</span>
+            </div>
+            <div class="fold-row">
+              <span class="fold-label">รอบที่ 5</span>
+              <span class="fold-block"></span><span class="fold-block"></span><span class="fold-block"></span><span class="fold-block"></span><span class="fold-block val"></span>
+              <span class="perf">Performance 5</span>
+            </div>
+            <div class="formula-line">
+              Performance = <span class="frac"><span>1</span><span>5</span></span> Σ Performance<sub>i</sub>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= S14 METRICS ================= -->
+  <section class="scene" id="s-metrics" data-duration="12000" data-title="การวัดค่าความคลาดเคลื่อน">
+    <div class="scene-inner">
+      <p class="eyebrow reveal">การวัดค่าความคลาดเคลื่อน</p>
+      <h2 class="scene-title reveal" style="--d:80">วัดว่าพลาดไปมากแค่ไหน</h2>
+      <p class="narration reveal" style="--d:160">
+        สี่ตัวชี้วัดนี้ตอบคำถามต่างกัน ทั้งการอธิบายความแปรปรวน ขนาดความคลาดเคลื่อน และเปอร์เซ็นต์ความผิดพลาด
+        ตัวเลขยิ่งสูงหรือต่ำดี ขึ้นอยู่กับตัวชี้วัด
+      </p>
+      <div class="metrics-grid">
+        <article class="metric-card reveal" style="--d:250">
+          <h3>R²</h3>
+          <div class="metric-name-en">Coefficient of Determination</div>
+          <div class="formula">
+            R² = 1 −
+            <span class="frac"><span>Σ(y<sub>i</sub> − ŷ<sub>i</sub>)²</span><span>Σ(y<sub>i</sub> − ȳ)²</span></span>
+          </div>
+          <p class="metric-meaning">บอกว่าตัวแบบอธิบายความแปรปรวนของราคาได้มากน้อยแค่ไหน</p>
+          <span class="metric-dir">R² ยิ่งสูงยิ่งดี</span>
+          <div class="mini-viz">
+            <div class="bar-track" style="height:12px"><span class="bar-fill xgb" style="width:74%"></span></div>
+            <div class="small muted" style="margin-top:.3rem">สัดส่วนความแปรปรวนที่อธิบายได้</div>
+          </div>
+        </article>
+
+        <article class="metric-card reveal" style="--d:380">
+          <h3>MAE</h3>
+          <div class="metric-name-en">Mean Absolute Error</div>
+          <div class="formula">
+            MAE = <span class="frac"><span>1</span><span>N</span></span> Σ |y<sub>i</sub> − ŷ<sub>i</sub>|
+          </div>
+          <p class="metric-meaning">ค่าเฉลี่ยของผลต่างสัมบูรณ์ระหว่างราคาจริงกับราคาที่ทำนาย</p>
+          <span class="metric-dir low">MAE ยิ่งต่ำยิ่งดี</span>
+          <div class="mini-viz">
+            <svg viewBox="0 0 180 48" width="100%" height="48" aria-hidden="true">
+              <line x1="10" y1="32" x2="170" y2="32" stroke="#BBD9F2" stroke-width="3" stroke-linecap="round"/>
+              <line x1="44" y1="16" x2="44" y2="32" stroke="#E8833A" stroke-width="2" stroke-dasharray="3 3"/>
+              <circle cx="44" cy="16" r="4" fill="#2F80ED"/><circle cx="44" cy="32" r="4" fill="#17507F"/>
+              <line x1="92" y1="24" x2="92" y2="32" stroke="#E8833A" stroke-width="2" stroke-dasharray="3 3"/>
+              <circle cx="92" cy="24" r="4" fill="#2F80ED"/><circle cx="92" cy="32" r="4" fill="#17507F"/>
+              <line x1="142" y1="19" x2="142" y2="32" stroke="#E8833A" stroke-width="2" stroke-dasharray="3 3"/>
+              <circle cx="142" cy="19" r="4" fill="#2F80ED"/><circle cx="142" cy="32" r="4" fill="#17507F"/>
+            </svg>
+          </div>
+        </article>
+
+        <article class="metric-card reveal" style="--d:510">
+          <h3>RMSE</h3>
+          <div class="metric-name-en">Root Mean Squared Error</div>
+          <div class="formula">
+            RMSE = √[ <span class="frac"><span>1</span><span>N</span></span> Σ (y<sub>i</sub> − ŷ<sub>i</sub>)² ]
+          </div>
+          <p class="metric-meaning">รากที่สองของค่าความผิดพลาดกำลังสองเฉลี่ย ให้ความสำคัญกับความผิดพลาดก้อนใหญ่</p>
+          <span class="metric-dir low">RMSE ยิ่งต่ำยิ่งดี</span>
+          <div class="mini-viz">
+            <svg viewBox="0 0 180 48" width="100%" height="48" aria-hidden="true">
+              <line x1="10" y1="34" x2="170" y2="34" stroke="#BBD9F2" stroke-width="3" stroke-linecap="round"/>
+              <line x1="52" y1="10" x2="52" y2="34" stroke="#E8833A" stroke-width="2" stroke-dasharray="3 3"/>
+              <circle cx="52" cy="10" r="4" fill="#2F80ED"/><circle cx="52" cy="34" r="4" fill="#17507F"/>
+              <line x1="112" y1="18" x2="112" y2="34" stroke="#E8833A" stroke-width="2" stroke-dasharray="3 3"/>
+              <circle cx="112" cy="18" r="4" fill="#2F80ED"/><circle cx="112" cy="34" r="4" fill="#17507F"/>
+            </svg>
+          </div>
+        </article>
+
+        <article class="metric-card reveal" style="--d:640">
+          <h3>MAPE</h3>
+          <div class="metric-name-en">Mean Absolute Percentage Error</div>
+          <div class="formula">
+            MAPE = <span class="frac"><span>100</span><span>N</span></span> Σ |(y<sub>i</sub> − ŷ<sub>i</sub>) / y<sub>i</sub>|
+          </div>
+          <p class="metric-meaning">ร้อยละความคลาดเคลื่อนสัมบูรณ์เฉลี่ย เทียบกับราคาจริง</p>
+          <span class="metric-dir low">MAPE ยิ่งต่ำยิ่งดี</span>
+          <div class="mini-viz">
+            <span class="badge" style="font-size:.78rem">% ความคลาดเคลื่อน</span>
+            <div class="small muted" style="margin-top:.35rem">อ่านง่ายเมื่อเทียบข้ามช่วงราคา</div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= S15 PERMUTATION IMPORTANCE ================= -->
+  <section class="scene" id="s-permutation" data-duration="12000" data-title="Permutation Importance">
+    <div class="scene-inner">
+      <p class="eyebrow reveal">ค่าความสำคัญของตัวแปร</p>
+      <h2 class="scene-title reveal" style="--d:80">สลับข้อมูลหนึ่งคอลัมน์ แล้วดูว่าแย่ลงแค่ไหน</h2>
+      <p class="narration reveal" style="--d:160">
+        ถ้าสลับค่าของตัวแปรใดแล้วโมเดลทำนายแย่ลงมาก แปลว่าตัวแปรนั้นสำคัญ
+        ความต่างของ Error ก่อนและหลังสลับคือค่า Permutation Importance
+      </p>
+      <div class="perm-layout">
+        <div class="reveal" style="--d:280">
+          <div class="section-head">
+            <h3>ตารางข้อมูล</h3>
+            <span class="badge example">ตัวอย่าง</span>
+          </div>
+          <div class="table-wrap">
+            <table class="perm-table" id="perm-table">
+              <thead><tr><th>X1</th><th>X2</th><th>X3</th><th>X4</th><th>X5</th><th>X6</th></tr></thead>
+              <tbody>
+                <tr><td>A1</td><td>B1</td><td class="perm-col-x3">C1</td><td>D1</td><td>E1</td><td>F1</td></tr>
+                <tr><td>A2</td><td>B2</td><td class="perm-col-x3">C2</td><td>D2</td><td>E2</td><td>F2</td></tr>
+                <tr><td>A3</td><td>B3</td><td class="perm-col-x3">C3</td><td>D3</td><td>E3</td><td>F3</td></tr>
+                <tr><td>A4</td><td>B4</td><td class="perm-col-x3">C4</td><td>D4</td><td>E4</td><td>F4</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="floor-note">ไฮไลต์คอลัมน์ X3 แล้วสลับค่าภายในคอลัมน์</p>
+          <div class="perm-arrow" aria-hidden="true">↓</div>
+          <div class="small muted">Trained Model → Error_base → สลับ X3 → Error_x3_shuffled</div>
+        </div>
+
+        <div class="reveal" style="--d:460">
+          <div class="section-head">
+            <h3>ผลของ Error</h3>
+            <span class="badge example">ตัวอย่าง</span>
+          </div>
+          <div class="perm-bars" id="perm-bars">
+            <div class="perm-bar-row">
+              <span style="min-width:110px">Error_base</span>
+              <div class="bar-track" style="height:14px"><span class="bar-fill rf" id="perm-base" style="width:0"></span></div>
+              <span class="bar-value">ฐาน</span>
+            </div>
+            <div class="perm-bar-row">
+              <span style="min-width:110px">Error_x3_shuffled</span>
+              <div class="bar-track" style="height:14px"><span class="bar-fill xgb" id="perm-shuffled" style="width:0"></span></div>
+              <span class="bar-value">สลับ X3</span>
+            </div>
+            <div class="perm-diff">PI ของ X3 = ผลต่างของ Error ทั้งสอง</div>
+          </div>
+          <p class="chart-note">หลังสลับคอลัมน์ X3 ความผิดพลาดของโมเดลเพิ่มขึ้นเท่าไร นั่นคือค่าความสำคัญของ X3 ในโมเดลนี้</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= S16 CHAPTER: RESULTS ================= -->
+  <section class="scene chapter" id="s-chapter-results" data-duration="6000" data-title="ผลจากการวิเคราะห์">
+    <div class="scene-inner">
+      <div class="chapter-num tnum reveal">02</div>
+      <h2 class="reveal" style="--d:100">ผลจากการวิเคราะห์</h2>
+      <p class="narration reveal" style="--d:200">เทียบสามตัวแบบบนชุดทดสอบเดียวกัน แล้วเลือกตัวที่เหมาะกับงานจริง</p>
+      <div class="chapter-pills">
+        <span class="reveal" style="--d:320;color:var(--dt);border-color:var(--dt)">Decision Tree Regression</span>
+        <span class="reveal" style="--d:400;color:var(--rf);border-color:var(--rf)">Random Forest Regression</span>
+        <span class="reveal" style="--d:480;color:#C4651D;border-color:var(--xgb)">XGBoost</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= S17 DECISION TREE ================= -->
+  <section class="scene model-scene model-dt" id="s-dt" data-duration="14000" data-title="Decision Tree Regression">
+    <div class="scene-inner">
+      <p class="eyebrow reveal">ผลจากการวิเคราะห์ · 01</p>
+      <div class="model-head reveal" style="--d:80">
+        <h2>Decision Tree Regression</h2>
+        <span class="model-tag">DECISION TREE</span>
+      </div>
+      <p class="narration reveal" style="--d:160">
+        เริ่มจากต้นไม้ต้นเดียว ปรับความลึกและจำนวนตัวอย่างขั้นต่ำในใบ
+        ผลลัพธ์คือตัวแบบที่เข้าใจง่าย แต่ยังมีค่าความคลาดเคลื่อนสูงกว่าอีกสองวิธี
+      </p>
+      <div class="combo-big reveal" style="--d:240">
+        <span class="combo-number tnum" id="dt-combo">87,088</span>
+        <span class="combo-label">ชุดค่าที่ทดลองทั้งหมด · 30 คู่ของ max_depth × min_samples_leaf และ ccp_alpha ตามเส้นทางตัดแต่งกิ่ง</span>
+      </div>
+
+      <div class="model-grid-2">
+        <div class="model-block reveal" style="--d:320">
+          <h3>ไฮเปอร์พารามิเตอร์ที่ทดลองและเลือก</h3>
+          <div id="dt-params"></div>
+        </div>
+        <div class="model-block reveal" style="--d:400">
+          <h3>Top 5 · MAE จาก 5-fold CV ต่ำที่สุด</h3>
+          <div id="dt-top5"></div>
+        </div>
+      </div>
+
+      <div class="model-block reveal" style="--d:500">
+        <h3>ผล 5-fold CV แยกรายรอบ</h3>
+        <div class="model-grid-2">
+          <div class="chart-card">
+            <div class="chart" id="dt-fold-chart" role="img" aria-label="กราฟแท่ง MAE ของ Decision Tree แต่ละ fold"></div>
+          </div>
+          <div>
+            <div class="r2-chips" id="dt-r2"></div>
+            <p class="floor-note">แท่งคือ MAE (บาท) ในแต่ละรอบ เส้นประคือค่าเฉลี่ย 57,931 บาท</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="model-block reveal" style="--d:600">
+        <h3>5-fold CV เทียบ Test</h3>
+        <div id="dt-cv"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= S18 RANDOM FOREST ================= -->
+  <section class="scene model-scene model-rf" id="s-rf" data-duration="14000" data-title="Random Forest Regression">
+    <div class="scene-inner">
+      <p class="eyebrow reveal">ผลจากการวิเคราะห์ · 02</p>
+      <div class="model-head reveal" style="--d:80">
+        <h2>Random Forest Regression</h2>
+        <span class="model-tag">RANDOM FOREST</span>
+      </div>
+      <p class="narration reveal" style="--d:160">
+        รวมต้นไม้หลายต้นเข้าด้วยกัน แล้วใช้ค่า Out-of-Bag ช่วยเลือกจำนวนต้น
+        ตัวแบบลดความคลาดเคลื่อนลงชัดเจนเมื่อเทียบกับต้นไม้เดี่ยว
+      </p>
+      <div class="combo-big reveal" style="--d:240">
+        <span class="combo-number tnum" id="rf-combo">42</span>
+        <span class="combo-label">ชุดค่าที่ทดลอง · max_features × min_samples_leaf ส่วน n_estimators ตรวจสอบจากค่า OOB</span>
+      </div>
+
+      <div class="model-block reveal" style="--d:300">
+        <h3>OOB MAE ตามจำนวนต้นไม้</h3>
+        <div class="chart-card">
+          <div class="chart" id="rf-oob-chart" role="img" aria-label="กราฟเส้น OOB MAE ตามจำนวนต้นไม้"></div>
+          <p class="chart-caption">เส้นประแนวตั้งที่ 300 ต้น คือจำนวนต้นที่เลือก</p>
+        </div>
+      </div>
+
+      <div class="model-grid-2">
+        <div class="model-block reveal" style="--d:380">
+          <h3>ไฮเปอร์พารามิเตอร์ที่ทดลองและเลือก</h3>
+          <div id="rf-params"></div>
+        </div>
+        <div class="model-block reveal" style="--d:460">
+          <h3>Top 5 · MAE จาก 5-fold CV ต่ำที่สุด</h3>
+          <div id="rf-top5"></div>
+        </div>
+      </div>
+
+      <div class="model-block reveal" style="--d:540">
+        <h3>ผล 5-fold CV แยกรายรอบ</h3>
+        <div class="model-grid-2">
+          <div class="chart-card">
+            <div class="chart" id="rf-fold-chart" role="img" aria-label="กราฟแท่ง MAE ของ Random Forest แต่ละ fold"></div>
+          </div>
+          <div>
+            <div class="r2-chips" id="rf-r2"></div>
+            <p class="floor-note">แท่งคือ MAE (บาท) ในแต่ละรอบ เส้นประคือค่าเฉลี่ย 53,323 บาท</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="model-block reveal" style="--d:620">
+        <h3>5-fold CV เทียบ Test</h3>
+        <div id="rf-cv"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= S19 XGBOOST ================= -->
+  <section class="scene model-scene model-xgb" id="s-xgb" data-duration="14000" data-title="XGBoost">
+    <div class="scene-inner">
+      <p class="eyebrow reveal">ผลจากการวิเคราะห์ · 03</p>
+      <div class="model-head reveal" style="--d:80">
+        <h2>XGBoost</h2>
+        <span class="model-tag">XGBOOST</span>
+      </div>
+      <p class="narration reveal" style="--d:160">
+        ใช้ Boosting ให้ต้นไม้ใหม่แก้ข้อผิดพลาดของต้นก่อนหน้า พร้อม Early Stopping
+        ผลคือตัวแบบที่ให้ค่าความคลาดเคลื่อนต่ำที่สุดในทั้งสามวิธี
+      </p>
+      <div class="combo-big reveal" style="--d:240">
+        <span class="combo-number tnum" id="xgb-combo">60</span>
+        <span class="combo-label">ชุดค่าที่ทดลอง · max_depth × min_child_weight × reg_lambda ส่วนจำนวนต้นกำหนดด้วย Early Stopping</span>
+      </div>
+
+      <div class="model-grid-2">
+        <div class="model-block reveal" style="--d:320">
+          <h3>ไฮเปอร์พารามิเตอร์ที่ทดลองและเลือก</h3>
+          <div id="xgb-params"></div>
+        </div>
+        <div class="model-block reveal" style="--d:400">
+          <h3>Top 5 · MAE จาก 5-fold CV ต่ำที่สุด</h3>
+          <div id="xgb-top5"></div>
+        </div>
+      </div>
+
+      <div class="model-block reveal" style="--d:480">
+        <h3>ผล 5-fold CV แยกรายรอบ</h3>
+        <div class="model-grid-2">
+          <div class="chart-card">
+            <div class="chart" id="xgb-fold-chart" role="img" aria-label="กราฟแท่ง MAE ของ XGBoost แต่ละ fold"></div>
+          </div>
+          <div>
+            <div class="r2-chips" id="xgb-r2"></div>
+            <p class="floor-note">แท่งคือ MAE (บาท) ในแต่ละรอบ เส้นประคือค่าเฉลี่ย 52,256 บาท</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="model-block reveal" style="--d:560">
+        <h3>5-fold CV เทียบ Test</h3>
+        <div id="xgb-cv"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= S20 COMPARISON ================= -->
+  <section class="scene" id="s-compare" data-duration="13000" data-title="เปรียบเทียบ 3 ตัวแบบ">
+    <div class="scene-inner">
+      <p class="eyebrow reveal">ผลการเปรียบเทียบ · ชุดทดสอบ</p>
+      <h2 class="scene-title reveal" style="--d:80">ใครแม่นที่สุดบนข้อมูลใหม่</h2>
+      <p class="narration reveal" style="--d:160">
+        เทียบทั้งสี่ตัวชี้วัดบนชุดทดสอบเดียวกัน R² ยิ่งสูงยิ่งดี ส่วน MAE, RMSE และ MAPE ยิ่งต่ำยิ่งดี
+        ตัวเลขทุกตัวมาจากชุดทดสอบ ไม่ใช่ชุดฝึก
+      </p>
+      <div class="compare-grid" id="comparison-grid"></div>
+      <div class="winner-banner reveal" style="--d:1500">
+        <span class="crown" aria-hidden="true">👑</span>
+        <span>XGBoost ดีที่สุดทุกตัวชี้วัด</span>
+        <span class="badge" style="background:#fff;color:#A65A17">ดีที่สุด</span>
+      </div>
+      <p class="chart-note reveal" style="--d:1650">R² สูงดี; MAE, RMSE, MAPE ต่ำดี → XGBoost ดีที่สุดทุกตัวชี้วัด (R² 0.9458, MAE 51,271 บาท, RMSE 76,379 บาท, MAPE 9.74%)</p>
+    </div>
+  </section>
+
+  <!-- ================= S21 IMPORTANCE RESULTS ================= -->
+  <section class="scene" id="s-importance" data-duration="14000" data-title="ผลความสำคัญของตัวแปร">
+    <div class="scene-inner">
+      <p class="eyebrow reveal">Permutation Importance · ผล</p>
+      <h2 class="scene-title reveal" style="--d:80">อะไรทำให้ราคาเปลี่ยนมากที่สุด</h2>
+      <p class="narration reveal" style="--d:160">
+        แท่งยาวหมายถึงเมื่อสลับตัวแปรนั้นแล้ว MAE เพิ่มขึ้นมาก นั่นคือตัวแปรนั้นสำคัญต่อการทำนาย
+        สลับแท็บเพื่อดูผลของแต่ละตัวแบบ
+      </p>
+      <div class="tabs reveal" style="--d:220" role="tablist" aria-label="เลือกตัวแบบ">
+        <button class="tab" type="button" role="tab" data-model="dt" aria-selected="false" aria-controls="importance-chart">Decision Tree</button>
+        <button class="tab" type="button" role="tab" data-model="rf" aria-selected="false" aria-controls="importance-chart">Random Forest</button>
+        <button class="tab" type="button" role="tab" data-model="xgb" aria-selected="true" aria-controls="importance-chart">XGBoost</button>
+      </div>
+      <div class="imp-layout">
+        <div class="reveal" style="--d:300">
+          <div class="section-head">
+            <h3>MAE ที่เพิ่มขึ้น (บาท)</h3>
+            <span class="small muted">สูงกว่า = สำคัญกว่า</span>
+          </div>
+          <div class="imp-chart" id="importance-chart" role="img" aria-label="กราฟแท่งแนวนอนค่าความสำคัญของตัวแปร"></div>
+        </div>
+        <div class="reveal" style="--d:380">
+          <div class="section-head"><h3>อันดับความสำคัญ</h3></div>
+          <div id="importance-table"></div>
+          <p class="floor-note">อันดับ 1 = สำคัญที่สุด · ไฮไลต์สองอันดับแรกของตัวแบบที่เลือก</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= S22 WEB APPLICATION ================= -->
+  <section class="scene" id="s-app" data-duration="12000" data-title="Web Application">
+    <div class="scene-inner">
+      <p class="eyebrow reveal">Web Application</p>
+      <h2 class="scene-title reveal" style="--d:80">จากตัวแบบ สู่หน้าจอที่ใช้จริง</h2>
+      <p class="narration reveal" style="--d:160">
+        ผู้ใช้กรอกข้อมูลรถทีละขั้น แล้วเว็บจะประเมินราคาโดยประมาณพร้อมช่วงราคาที่สมเหตุสมผล
+        ให้เห็นภาพก่อนตัดสินใจซื้อขาย
+      </p>
+      <div class="app-layout">
+        <div class="phone-wrap reveal" style="--d:260">
+          <div class="phone">
+            <div class="phone-screen">
+              <img id="app-screen" src="assets/app-input1-type.jpg" alt="หน้าจอเลือกประเภทรถ รถตู้ ซีดาน และแฮทช์แบ็ก" loading="lazy" decoding="async">
+            </div>
+          </div>
+          <span class="app-step" id="app-step-label">Input 01 · ประเภทรถ</span>
+          <div class="thumbs" id="app-thumbs" aria-label="เลือกหน้าจอตัวอย่าง"></div>
+        </div>
+
+        <div class="app-result reveal" style="--d:420">
+          <p class="small muted" style="margin-bottom:.2rem">ราคาโดยประมาณ</p>
+          <div class="price-big tnum"><span id="app-price">651,000</span> <small>บาท</small></div>
+          <p class="price-range tnum">ช่วงราคาสมเหตุสมผล (±8%) <strong>599,000 – 703,000</strong></p>
+          <p class="small muted">TOYOTA CAMRY · 2018 · 80,000 km</p>
+          <p class="small muted">กราฟราคา 5 ปีข้างหน้า 2026 → 2031 (651,000 → 321,000) สมมติขับปีละ 15,000 กม.</p>
+          <div class="note">
+            <span id="app-note">โมเดล XGBoost ที่เทรนจากชุดข้อมูล v5 (R² ทดสอบ 0.946, MAE ประมาณ 51,000 บาท)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= S23 CONCLUSION ================= -->
+  <section class="scene" id="s-conclusion" data-duration="12000" data-title="สรุปผล">
+    <div class="scene-inner">
+      <p class="eyebrow reveal">สรุปผลจากผลการวิเคราะห์</p>
+      <h2 class="scene-title reveal" style="--d:80">สี่ข้อที่ได้เรียนรู้</h2>
+      <p class="narration reveal" style="--d:160">
+        ตัวเลขสำคัญสามค่าที่สรุปภาพรวมของงานนี้ คือความคลาดเคลื่อนที่ต่ำ การอธิบายความแปรปรวนได้สูง
+        และตัวแบบที่พร้อมนำไปใช้จริง
+      </p>
+      <div class="conclusion-grid">
+        <article class="conclusion-card reveal" style="--d:260">
+          <span class="icon-badge" aria-hidden="true">🏆</span>
+          <h3>1 · ประสิทธิภาพของตัวแบบ</h3>
+          <p>XGBoost ดีที่สุด โดย MAE บนชุดทดสอบ <span class="keynum tnum" id="concl-mae">51,271</span> บาท และอธิบายความแปรปรวนได้ <span class="keynum tnum" id="concl-pct">94.23%</span> (R² = <span class="keynum tnum" id="concl-r2">0.9423</span>) รองลงมาคือ Random Forest และ Decision Tree</p>
+        </article>
+        <article class="conclusion-card reveal" style="--d:400">
+          <span class="icon-badge" aria-hidden="true">🛡️</span>
+          <h3>2 · การตรวจสอบ Overfitting</h3>
+          <p>ทั้ง 3 วิธีไม่มีปัญหา Overfitting ที่ส่งผลต่อการทำนายข้อมูลใหม่ เพราะ MAE บนชุดทดสอบไม่สูงไปกว่าค่าที่ได้จาก 5-fold Cross-validation</p>
+        </article>
+        <article class="conclusion-card reveal" style="--d:540">
+          <span class="icon-badge" aria-hidden="true">🔍</span>
+          <h3>3 · ปัจจัยที่มีอิทธิพล</h3>
+          <p>ขนาดเครื่องยนต์และอายุของรถยนต์สำคัญที่สุด รองลงมาคือยี่ห้อและประเภทของรถ ส่วนระบบเกียร์สำคัญน้อยที่สุดในทุกตัวแบบ</p>
+        </article>
+        <article class="conclusion-card reveal" style="--d:680">
+          <span class="icon-badge" aria-hidden="true">🌐</span>
+          <h3>4 · การนำไปประยุกต์ใช้</h3>
+          <p>นำ XGBoost ซึ่งมีประสิทธิภาพสูงสุดไปพัฒนาเป็นเว็บแอปพลิเคชัน เพื่อช่วยประเมินราคากลางที่สมเหตุสมผลสำหรับผู้ซื้อและผู้ขาย</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= S23b RECOMMENDATIONS ================= -->
+  <section class="scene" id="s-recommendations" data-duration="9000" data-title="ข้อเสนอแนะ">
+    <div class="scene-inner">
+      <p class="eyebrow reveal">ข้อเสนอแนะ</p>
+      <h2 class="scene-title reveal" style="--d:80">ก้าวต่อไปของงานนี้</h2>
+      <p class="narration reveal" style="--d:160">
+        ข้อเสนอแนะทั้งสี่ข้อมาจากข้อจำกัดของข้อมูลและบริบทการใช้งานจริง
+        เป็นแนวทางให้งานถัดไปตอบโจทย์ตลาดรถมือสองได้ครบขึ้น
+      </p>
+      <div class="rec-list" id="rec-list"></div>
+    </div>
+  </section>
+
+  <!-- ================= S24 THANK YOU ================= -->
+  <section class="scene thanks" id="s-thanks" data-duration="7000" data-title="ขอบคุณ">
+    <div class="confetti" id="confetti" aria-hidden="true"></div>
+    <div class="scene-inner">
+      <div class="mini-bars" aria-hidden="true">
+        <span style="--i:0;--h:34%"></span><span style="--i:1;--h:52%"></span><span style="--i:2;--h:44%"></span><span style="--i:3;--h:70%"></span><span style="--i:4;--h:58%"></span><span style="--i:5;--h:88%"></span><span style="--i:6;--h:74%"></span><span style="--i:7;--h:96%"></span>
+      </div>
+      <h2 class="reveal" style="--d:100">THANK YOU</h2>
+      <p class="thanks-th reveal" style="--d:300">ขอบคุณครับ/ค่ะ</p>
+      <p class="narration reveal" style="--d:420;margin-left:auto;margin-right:auto">
+        ขอบคุณอาจารย์ที่ปรึกษาและทุกท่านที่รับฟัง หวังว่าเรื่องราวของข้อมูลชุดนี้จะช่วยให้เห็นคุณค่าของการประเมินราคาอย่างมีเหตุผล
+      </p>
+      <button class="btn-primary reveal" id="restart-btn" type="button" style="--d:560">↺ เริ่มใหม่</button>
+    </div>
+  </section>
+
+</main>
+
+<div class="player" role="group" aria-label="ตัวเล่นการนำเสนอ">
+  <button id="progress" class="progress" type="button" aria-label="ไปยังฉากตามตำแหน่งที่คลิกในแถบความคืบหน้า">
+    <span class="progress-fill" id="progress-fill"></span>
+  </button>
+  <div class="player-row">
+    <button id="prev-btn" class="ctrl-btn" type="button" aria-label="ฉากก่อนหน้า" title="ฉากก่อนหน้า">⏮</button>
+    <button id="play-btn" class="ctrl-btn play" type="button" aria-label="เล่นเรื่องราว" title="เล่น / หยุด">▶</button>
+    <button id="next-btn" class="ctrl-btn" type="button" aria-label="ฉากถัดไป" title="ฉากถัดไป">⏭</button>
+    <span class="counter" id="scene-counter" aria-live="polite">1 / 26</span>
+    <span class="player-hint">Space เล่น/หยุด · ← → เปลี่ยนฉาก</span>
+  </div>
+</div>
+
+</body>
+</html>
