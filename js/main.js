@@ -59,6 +59,45 @@
     return Math.round(n).toLocaleString("en-US");
   }
 
+  var PARAM_MEANING = {
+    max_depth: "ความลึกสูงสุดของต้นไม้",
+    min_samples_leaf: "จำนวนข้อมูลขั้นต่ำในใบแต่ละใบ",
+    ccp_alpha: "ความแรงในการตัดแต่งกิ่งต้นไม้ (ยิ่งมากยิ่งตัดมาก)",
+    n_estimators: "จำนวนต้นไม้",
+    max_features: "สัดส่วนตัวแปรที่แต่ละต้นสุ่มพิจารณาในแต่ละการแบ่ง",
+    min_child_weight: "น้ำหนักข้อมูลขั้นต่ำในแต่ละโหนดลูก",
+    reg_lambda: "ตัวคุมไม่ให้ตัวแบบซับซ้อนเกินไป (L2)",
+    learning_rate: "ขนาดก้าวที่ต้นไม้แต่ละต้นแก้ความผิดพลาด",
+    subsample: "สัดส่วนข้อมูลที่ใช้สร้างแต่ละต้น",
+    colsample_bytree: "สัดส่วนตัวแปรที่ใช้สร้างแต่ละต้น"
+  };
+
+  /* Variable numbers from slide 10 (S10). */
+  var VAR_META = {
+    "ประเภทรถยนต์": { name: "ประเภทรถยนต์", num: "1" },
+    "ประเภทของรถยนต์": { name: "ประเภทรถยนต์", num: "1" },
+    "ยี่ห้อรถยนต์": { name: "ยี่ห้อรถยนต์", num: "2" },
+    "รุ่นรถยนต์": { name: "รุ่นรถยนต์", num: "3" },
+    "ประเภทเชื้อเพลิง": { name: "ประเภทเชื้อเพลิง", num: "4" },
+    "ขนาดเครื่องยนต์": { name: "ขนาดเครื่องยนต์", num: "5" },
+    "ระบบเกียร์": { name: "ระบบเกียร์", num: "6" },
+    "ระยะทางที่วิ่งทั้งหมด": { name: "ระยะทางที่วิ่งทั้งหมด", num: "7" },
+    "ระยะทางที่วิ่งหรือเลขไมล์": { name: "ระยะทางที่วิ่งทั้งหมด", num: "7" },
+    "อายุของรถยนต์": { name: "อายุของรถยนต์", num: "8" }
+  };
+
+  function varMeta(name) {
+    return VAR_META[name] || { name: name, num: "" };
+  }
+  function varLabelText(name) {
+    var m = varMeta(name);
+    return m.name + (m.num ? " (X" + m.num + ")" : "");
+  }
+  function varLabelHtml(name) {
+    var m = varMeta(name);
+    return m.name + (m.num ? " (X<sub>" + m.num + "</sub>)" : "");
+  }
+
   /* =========================================================
      Static content rendering
      ========================================================= */
@@ -180,7 +219,7 @@
     if (!el) return;
     el.innerHTML = "";
     var wrap = document.createElement("div");
-    wrap.className = "table-wrap";
+    wrap.className = "table-wrap" + (opts.wrapClass ? " " + opts.wrapClass : "");
     var table = document.createElement("table");
     table.className = "data-table" + (opts.wrap ? " wrap-cells" : "");
 
@@ -200,6 +239,7 @@
     rows.forEach(function (row, ri) {
       var tr = document.createElement("tr");
       if (opts.bestRow && ri === 0) tr.className = "best-row";
+      if (opts.lastRowClass && ri === rows.length - 1) tr.className = opts.lastRowClass;
       row.forEach(function (cell, ci) {
         var td = document.createElement("td");
         td.textContent = cell;
@@ -217,47 +257,75 @@
   var MODEL_META = {
     dt: {
       color: C.dt,
-      topHead: ["อันดับ", "max_depth", "min_samples_leaf", "ccp_alpha", "MAE (บาท)", "SD (บาท)"],
-      topNum: [0, 1, 2, 4, 5],
+      topHead: ["อันดับ", "max_depth", "min_samples_leaf", "ccp_alpha", "MAE (บาท)"],
+      topNum: [0, 1, 2, 4],
+      topCols: 5,
       aria: "Decision Tree"
     },
     rf: {
       color: C.rf,
-      topHead: ["อันดับ", "max_features", "min_samples_leaf", "MAE (บาท)", "SD (บาท)"],
-      topNum: [0, 1, 2, 3, 4],
+      topHead: ["อันดับ", "max_features", "min_samples_leaf", "MAE (บาท)"],
+      topNum: [0, 1, 2, 3],
+      topCols: 4,
       aria: "Random Forest"
     },
     xgb: {
       color: C.xgb,
-      topHead: ["อันดับ", "max_depth", "min_child_weight", "reg_lambda", "n_estimators", "MAE (บาท)", "SD (บาท)"],
-      topNum: [0, 1, 2, 3, 4, 5, 6],
+      topHead: ["อันดับ", "max_depth", "min_child_weight", "reg_lambda", "n_estimators", "MAE (บาท)"],
+      topNum: [0, 1, 2, 3, 4, 5],
+      topCols: 6,
       aria: "XGBoost"
     }
   };
 
   function initModel(key, data, ids) {
     var meta = MODEL_META[key];
-    renderTable(ids.params, ["Hyperparameter", "ค่าที่ทดลอง", "ค่าที่เลือก"], data.params, { chosenCol: 2, wrap: true });
-    renderTable(ids.top5, meta.topHead, data.top5, { bestRow: true, numCols: meta.topNum });
-    renderTable(ids.cv, ["Metric", "5-fold CV", "Test"], data.cv, { numCols: [1, 2] });
 
-    var r2 = $(ids.r2);
-    if (r2) {
-      r2.innerHTML = "";
-      data.folds.forEach(function (row) {
-        var chip = document.createElement("span");
-        chip.className = "r2-chip";
-        chip.textContent = "Fold " + row[0] + " · R² " + row[1];
-        r2.appendChild(chip);
+    var paramRows = data.params.map(function (row) {
+      return [row[0], row[1], row[2], PARAM_MEANING[row[0]] || ""];
+    });
+    renderTable(ids.params, ["Hyperparameter", "ค่าที่ทดลอง", "ค่าที่เลือก", "ความหมาย"], paramRows, {
+      chosenCol: 2, wrap: true, wrapClass: "params-wrap"
+    });
+    var paramsHost = $(ids.params);
+    if (paramsHost) {
+      var paramsNote = document.createElement("p");
+      paramsNote.className = "floor-note";
+      paramsNote.textContent = "ค่าที่เลือก = ค่าที่ให้ MAE จาก 5-fold CV ต่ำสุด";
+      paramsHost.appendChild(paramsNote);
+    }
+
+    var topRows = data.top5.map(function (row) { return row.slice(0, meta.topCols); });
+    renderTable(ids.top5, meta.topHead, topRows, { bestRow: true, numCols: meta.topNum });
+
+    renderTable(ids.cv, ["Metric", "Training (5-fold CV)", "Testing"], data.cv, { numCols: [1, 2] });
+    var cvHost = $(ids.cv);
+    if (cvHost) {
+      var cvNote = document.createElement("p");
+      cvNote.className = "floor-note cv-note";
+      cvNote.textContent = "ค่า MAE ของ Training กับ Testing ใกล้เคียงกัน จึงไม่เกิด Overfitting";
+      cvHost.appendChild(cvNote);
+    }
+
+    var foldsHost = $(ids.folds);
+    if (foldsHost) {
+      var foldRows = data.folds.map(function (row) { return [row[0], row[1]]; });
+      foldRows.push(["ค่าเฉลี่ย (MEAN)", data.mean.mae]);
+      renderTable(foldsHost, ["Fold", "MAE (บาท)"], foldRows, {
+        numCols: [1], lastRowClass: "mean-row"
       });
-      var mean = document.createElement("span");
-      mean.className = "r2-chip strong";
-      mean.textContent = "เฉลี่ย · R² " + data.mean.r2;
-      r2.appendChild(mean);
-      var sd = document.createElement("span");
-      sd.className = "r2-chip";
-      sd.textContent = "SD · R² " + data.sd.r2;
-      r2.appendChild(sd);
+
+      var maeValues = data.folds.map(function (row) { return Number(row[1].replace(/,/g, "")); });
+      var hint = document.createElement("p");
+      hint.className = "fold-hint";
+      hint.textContent = "อ่านตารางนี้อย่างไร: แต่ละแถวคือการสลับกลุ่มที่ใช้ตรวจสอบ 1 ใน 5 ส่วน";
+      var sentence = document.createElement("p");
+      sentence.className = "fold-sentence";
+      sentence.textContent = "MAE ทั้ง 5 fold อยู่ระหว่าง " + comma(Math.min.apply(null, maeValues)) +
+        " - " + comma(Math.max.apply(null, maeValues)) +
+        " บาท ใกล้เคียงกัน แปลว่าตัวแบบนิ่ง ไม่เปลี่ยนมากตามข้อมูลที่สุ่มมา";
+      foldsHost.appendChild(hint);
+      foldsHost.appendChild(sentence);
     }
   }
 
@@ -285,6 +353,8 @@
 
     var label = $("#app-step-label");
     if (label) label.textContent = s.step + " · " + s.desc;
+    var caption = $("#app-caption");
+    if (caption) caption.hidden = s.step !== "Output เปรียบเทียบ";
     $$("#app-thumbs .thumb").forEach(function (btn, i) {
       btn.setAttribute("aria-current", i === index ? "true" : "false");
     });
@@ -497,7 +567,7 @@
       });
     }
 
-    var foldValues = data.folds.map(function (row) { return Number(row[2].replace(/,/g, "")); });
+    var foldValues = data.folds.map(function (row) { return Number(row[1].replace(/,/g, "")); });
     Charts.barChart($("#" + key + "-fold-chart"), {
       labels: data.folds.map(function (row) { return "Fold " + row[0]; }),
       values: foldValues,
@@ -543,15 +613,27 @@
         { key: "xgb", name: "XGBoost" }
       ];
       var max = Math.max(metric.dt, metric.rf, metric.xgb);
+      var bestKey = "dt";
+      models.forEach(function (m) {
+        var isBetter = metric.better === "สูงดี" ? metric[m.key] > metric[bestKey] : metric[m.key] < metric[bestKey];
+        if (isBetter) bestKey = m.key;
+      });
 
       models.forEach(function (m, mi) {
         var value = metric[m.key];
+        var isBest = m.key === bestKey;
         var row = document.createElement("div");
-        row.className = "model-bar-row" + (m.key === "xgb" ? " winner" : "");
+        row.className = "model-bar-row" + (isBest ? " winner" : "");
 
         var name = document.createElement("span");
         name.className = "model-name";
         name.textContent = m.name;
+        if (isBest) {
+          var bestTag = document.createElement("span");
+          bestTag.className = "best-tag";
+          bestTag.textContent = "ดีที่สุด";
+          name.appendChild(bestTag);
+        }
 
         var barTrack = document.createElement("span");
         barTrack.className = "bar-track";
@@ -614,7 +696,8 @@
       if (row[model] <= 2) tr.className = "best-row";
       [row.name, row.dt, row.rf, row.xgb].forEach(function (cell, ci) {
         var td = document.createElement("td");
-        td.textContent = cell;
+        if (ci === 0) td.innerHTML = varLabelHtml(row.name);
+        else td.textContent = cell;
         if (ci > 0) td.className = "num";
         tr.appendChild(td);
       });
@@ -630,7 +713,7 @@
     var deltas = DATA.importance.deltas.slice().sort(function (a, b) { return b[model] - a[model]; });
     var items = deltas.map(function (d, i) {
       return {
-        label: d.name,
+        label: varLabelText(d.name),
         value: d[model],
         display: comma(d[model]),
         colorClass: model,
@@ -684,6 +767,172 @@
     Charts.countUp($("#concl-r2"), DATA.conclusion.r2, {
       duration: 1600, delay: 700, decimals: 4, finalText: "0.9423"
     });
+  }
+
+  function comparisonValue(label, key) {
+    for (var i = 0; i < DATA.comparison.length; i++) {
+      if (DATA.comparison[i].label === label) return DATA.comparison[i][key];
+    }
+    return 0;
+  }
+
+  function animHighlight() {
+    var r2 = comparisonValue("R-squared", "xgb");
+    var mae = comparisonValue("MAE (บาท)", "xgb");
+    var rmse = comparisonValue("RMSE (บาท)", "xgb");
+    var mape = comparisonValue("MAPE (%)", "xgb");
+
+    Charts.countUp($("#hl-r2"), r2, {
+      duration: 1600, delay: 350, decimals: 4, finalText: r2.toFixed(4)
+    });
+    Charts.countUp($("#hl-mae"), mae, {
+      duration: 1600, delay: 500, finalText: comma(mae)
+    });
+    Charts.countUp($("#hl-rmse"), rmse, {
+      duration: 1600, delay: 650, finalText: comma(rmse)
+    });
+    Charts.countUp($("#hl-mape"), mape, {
+      duration: 1600, delay: 800, decimals: 2, finalText: mape.toFixed(2)
+    });
+  }
+
+  /* ---------- conclusion data visuals ---------- */
+  function cvMae(data, column) {
+    for (var i = 0; i < data.cv.length; i++) {
+      if (data.cv[i][0].indexOf("MAE") === 0) {
+        return Number(data.cv[i][column].replace(/,/g, ""));
+      }
+    }
+    return 0;
+  }
+
+  function miniTrees(count) {
+    var html = "";
+    for (var i = 0; i < count; i++) {
+      html += '<span class="tree-icon"><i></i><i></i><i></i><i></i></span>';
+    }
+    return html;
+  }
+
+  function conclBar(label, value, max, cls, delay, isBest) {
+    var row = document.createElement("div");
+    row.className = "concl-bar-row" + (isBest ? " is-best" : "");
+    var labelEl = document.createElement("span");
+    labelEl.className = "concl-bar-label";
+    labelEl.textContent = label;
+    var track = document.createElement("span");
+    track.className = "bar-track";
+    var fill = document.createElement("span");
+    fill.className = "bar-fill concl-bar-fill " + cls;
+    fill.style.width = Math.max(3, (value / max) * 100) + "%";
+    fill.style.setProperty("--d", String(delay || 0));
+    track.appendChild(fill);
+    var valueEl = document.createElement("span");
+    valueEl.className = "concl-bar-value tnum";
+    valueEl.textContent = comma(value);
+    row.appendChild(labelEl);
+    row.appendChild(track);
+    row.appendChild(valueEl);
+    return row;
+  }
+
+  function conclMini(label, value, max, cls, delay) {
+    var row = document.createElement("div");
+    row.className = "concl-mini";
+    var labelEl = document.createElement("span");
+    labelEl.className = "concl-mini-label";
+    labelEl.textContent = label;
+    var track = document.createElement("span");
+    track.className = "bar-track";
+    var fill = document.createElement("span");
+    fill.className = "bar-fill concl-bar-fill " + cls;
+    fill.style.width = Math.max(3, (value / max) * 100) + "%";
+    fill.style.setProperty("--d", String(delay || 0));
+    track.appendChild(fill);
+    var valueEl = document.createElement("span");
+    valueEl.className = "concl-bar-value tnum";
+    valueEl.textContent = comma(value);
+    row.appendChild(labelEl);
+    row.appendChild(track);
+    row.appendChild(valueEl);
+    return row;
+  }
+
+  function renderConclusionViz() {
+    var viz1 = $("#concl-viz-1");
+    if (viz1) {
+      viz1.innerHTML = "";
+      var head = document.createElement("div");
+      head.className = "concl-eff-head";
+      head.innerHTML =
+        '<span class="concl-badge">XGBoost</span>' +
+        '<span class="concl-trees" aria-hidden="true">' + miniTrees(3) + "</span>";
+      viz1.appendChild(head);
+
+      var maeDt = comparisonValue("MAE (บาท)", "dt");
+      var maeRf = comparisonValue("MAE (บาท)", "rf");
+      var maeXgb = comparisonValue("MAE (บาท)", "xgb");
+      var maxMae = Math.max(maeDt, maeRf, maeXgb);
+      viz1.appendChild(conclBar("Decision Tree", maeDt, maxMae, "dt", 80));
+      viz1.appendChild(conclBar("Random Forest", maeRf, maxMae, "rf", 160));
+      viz1.appendChild(conclBar("XGBoost", maeXgb, maxMae, "xgb", 240, true));
+    }
+
+    var viz2 = $("#concl-viz-2");
+    if (viz2) {
+      viz2.innerHTML = "";
+      var pairs = [
+        { name: "DT", train: Number(DATA.dt.mean.mae.replace(/,/g, "")), test: cvMae(DATA.dt, 2), cls: "dt" },
+        { name: "RF", train: Number(DATA.rf.mean.mae.replace(/,/g, "")), test: cvMae(DATA.rf, 2), cls: "rf" },
+        { name: "XGB", train: Number(DATA.xgb.mean.mae.replace(/,/g, "")), test: cvMae(DATA.xgb, 2), cls: "xgb" }
+      ];
+      var maxPair = 0;
+      pairs.forEach(function (p) { maxPair = Math.max(maxPair, p.train, p.test); });
+      pairs.forEach(function (p, i) {
+        var group = document.createElement("div");
+        group.className = "concl-pair";
+        var nameEl = document.createElement("span");
+        nameEl.className = "concl-pair-name";
+        nameEl.textContent = p.name;
+        var bars = document.createElement("div");
+        bars.className = "concl-pair-bars";
+        bars.appendChild(conclMini("Train", p.train, maxPair, p.cls, 60 + i * 80));
+        bars.appendChild(conclMini("Test", p.test, maxPair, p.cls, 120 + i * 80));
+        group.appendChild(nameEl);
+        group.appendChild(bars);
+        viz2.appendChild(group);
+      });
+    }
+
+    var viz3 = $("#concl-viz-3");
+    if (viz3) {
+      viz3.innerHTML = "";
+      var top = DATA.importance.deltas.slice().sort(function (a, b) { return b.xgb - a.xgb; }).slice(0, 3);
+      var maxDelta = top[0].xgb;
+      top.forEach(function (d, i) {
+        viz3.appendChild(conclBar(varLabelText(d.name), d.xgb, maxDelta, "xgb", i * 90, i === 0));
+      });
+    }
+  }
+
+  function renderAppLink() {
+    var host = $("#app-link");
+    if (!host) return;
+    if (typeof APP_URL === "undefined" || !APP_URL) return;
+    host.innerHTML = "";
+    var card = document.createElement("div");
+    card.className = "app-link-card";
+    var title = document.createElement("h3");
+    title.textContent = "ลองใช้งานจริง";
+    var link = document.createElement("a");
+    link.className = "btn-primary app-link-btn";
+    link.href = APP_URL;
+    link.target = "_blank";
+    link.rel = "noopener";
+    link.textContent = "เปิดเว็บแอป →";
+    card.appendChild(title);
+    card.appendChild(link);
+    host.appendChild(card);
   }
 
   function animThanks() {
@@ -999,6 +1248,7 @@
     "s-rf": function () { animModel("rf"); },
     "s-xgb": function () { animModel("xgb"); },
     "s-compare": renderComparison,
+    "s-highlight": animHighlight,
     "s-importance": function () {
       renderImportance(activeImportance);
       startImportanceCycle();
@@ -1015,15 +1265,25 @@
   renderRelated();
   renderVariables();
   renderRecommendations();
+  renderConclusionViz();
+  renderAppLink();
   buildAppThumbs();
 
-  initModel("dt", DATA.dt, { params: "#dt-params", top5: "#dt-top5", cv: "#dt-cv", r2: "#dt-r2" });
-  initModel("rf", DATA.rf, { params: "#rf-params", top5: "#rf-top5", cv: "#rf-cv", r2: "#rf-r2" });
-  initModel("xgb", DATA.xgb, { params: "#xgb-params", top5: "#xgb-top5", cv: "#xgb-cv", r2: "#xgb-r2" });
+  initModel("dt", DATA.dt, { params: "#dt-params", top5: "#dt-top5", cv: "#dt-cv", folds: "#dt-folds" });
+  initModel("rf", DATA.rf, { params: "#rf-params", top5: "#rf-top5", cv: "#rf-cv", folds: "#rf-folds" });
+  initModel("xgb", DATA.xgb, { params: "#xgb-params", top5: "#xgb-top5", cv: "#xgb-cv", folds: "#xgb-folds" });
 
   $$(".tab").forEach(function (btn) {
     btn.addEventListener("click", function () {
       renderImportance(btn.getAttribute("data-model"));
+    });
+  });
+
+  $$(".benefit-link").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var target = document.getElementById("s-importance");
+      var idx = target ? scenes.indexOf(target) : -1;
+      if (idx !== -1 && window.story) window.story.goTo(idx);
     });
   });
 
