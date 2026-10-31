@@ -394,3 +394,11 @@ html.pm-lock, html.pm-lock body { overflow: hidden; }
   .pm-overlay, .pm-dialog, .pm-bfill, .pm-oobmk, .pm-gcard, .pm-gbar, .pm-crown, .pm-blk, .pm-launch { transition: none !important; }
   .scene.inview .pm-launch { animation: none; }
 }
+
+/* landscape phones: keep the dialog inside the screen, close button always visible */
+@media (orientation: landscape) and (max-height: 520px) {
+  .pl-overlay, .pm-overlay { padding: 6px; }
+  .pl-dialog, .pm-dialog { max-height: calc(100vh - 12px); max-height: calc(100dvh - 12px); padding-top: 0; }
+  .pl-head, .pm-dlg-head { position: sticky; top: 0; z-index: 6; background: #fff; padding: 8px 0 6px; }
+  .pl-close, .pm-close { width: 32px; height: 32px; }
+}

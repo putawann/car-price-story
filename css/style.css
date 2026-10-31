@@ -1325,7 +1325,7 @@ p { margin: 0 0 1em; }
 .fold-hint { font-size: .72rem; color: var(--muted); margin: .55rem 0 .1rem; }
 .fold-sentence { font-size: .78rem; color: var(--navy); margin: .1rem 0 0; }
 .cv-note { color: var(--navy); }
-@media (max-width: 640px) {
+@media (max-width: 640px) and (orientation: portrait) {
   .table-wrap.params-wrap .data-table { min-width: 560px; }
 }
 
@@ -1833,7 +1833,7 @@ p { margin: 0 0 1em; }
   .side-nav { display: flex; }
 }
 
-@media (max-width: 860px) {
+@media (max-width: 860px) and (orientation: portrait) {
   .tuning-grid, .perm-layout, .imp-layout, .app-layout, .model-grid-2, .price-layout { grid-template-columns: minmax(0, 1fr); }
   .app-layout { gap: 1.5rem; }
   .app-result { text-align: center; }
@@ -1844,7 +1844,7 @@ p { margin: 0 0 1em; }
   .perm-arrow { transform: rotate(90deg); }
 }
 
-@media (max-width: 640px) {
+@media (max-width: 640px) and (orientation: portrait) {
   .scene { padding: 72px 16px 112px; }
   .scene-title { font-size: 1.55rem; }
   .narration { margin-bottom: 1.3rem; }
@@ -1887,7 +1887,7 @@ p { margin: 0 0 1em; }
 }
 
 /* ---------- fit-to-viewport compaction (desktop) ---------- */
-@media (min-width: 861px) {
+@media (min-width: 861px), (orientation: landscape) {
   .scene { padding-top: 60px; }
   .narration { margin-bottom: 1.1rem; }
   .hero { padding-top: 56px; }
@@ -1913,12 +1913,12 @@ p { margin: 0 0 1em; }
   .phone { height: min(58vh, 520px); }
   .thumb { width: 38px; height: 50px; }
 }
-@media (max-width: 640px) {
+@media (max-width: 640px) and (orientation: portrait) {
   .scene { padding: 64px 16px 120px; }
   .bar-label { white-space: normal; line-height: 1.25; }
   .hero-car { width: min(320px, 80%); }
 }
-@media (min-width: 861px) {
+@media (min-width: 861px), (orientation: landscape) {
   .paper-card { height: 200px; }
   .paper-title { margin: .2rem 0 .25rem; }
   #s-related .narration { margin-bottom: .8rem; }
@@ -1928,7 +1928,7 @@ p { margin: 0 0 1em; }
   #s-app .phone-wrap { gap: .4rem; }
   #s-app .thumbs { margin-top: .2rem; }
 }
-@media (min-width: 861px) {
+@media (min-width: 861px), (orientation: landscape) {
   #s-background .chart svg { max-height: min(250px, 31vh); }
   #s-background .narration { margin-bottom: .6rem; }
   #s-background .scene-inner > p:not(.eyebrow):not(.narration):not(.chart-note) { margin-bottom: .6rem; font-size: .92rem; }
@@ -1942,11 +1942,11 @@ p { margin: 0 0 1em; }
 .pair-row { display: grid; grid-template-columns: 150px minmax(0, 1fr) 64px; gap: .6rem; align-items: center; font-size: .74rem; }
 .pair-name { color: var(--muted); }
 .pair-row .bar-track { height: 16px; }
-@media (max-width: 640px) {
+@media (max-width: 640px) and (orientation: portrait) {
   .pair-row { grid-template-columns: 1fr 64px; }
   .pair-row .pair-name { grid-column: 1 / -1; }
 }
-@media (min-width: 861px) {
+@media (min-width: 861px), (orientation: landscape) {
   .model-scene .narration { margin-bottom: .5rem; }
   .model-scene .combo-big { margin: .4rem 0 .6rem; }
   .model-scene .combo-number { font-size: clamp(1.8rem, 3.2vw, 2.4rem); }
@@ -1955,6 +1955,48 @@ p { margin: 0 0 1em; }
 }
 
 /* keep these denser scenes within one 800px-high screen on desktop */
-@media (min-width: 861px) {
+@media (min-width: 861px), (orientation: landscape) {
   #s-related, #s-importance, #s-app { padding-bottom: 100px; }
+}
+
+/* ---------- fit-to-screen mode (landscape tablets / phones, set by js/fit.js) ---------- */
+html.fit .scene {
+  height: var(--fit-h, 100vh);
+  min-height: 0;
+  padding: 10px 8px var(--fit-bar, 104px);
+}
+html.fit .scene-inner {
+  zoom: var(--z, 1);
+  width: var(--lw, 1100px);
+  flex: none;
+}
+html.fit .scene-inner.wide { max-width: var(--lw, 1100px); }
+html.fit .side-nav { display: none; }
+@media (orientation: landscape) and (max-height: 520px) {
+  html.fit .player {
+    width: min(560px, calc(100vw - 24px));
+    bottom: 4px;
+    padding: 3px 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-radius: 14px;
+  }
+  html.fit .progress { flex: 1 1 auto; order: 2; }
+  html.fit .player-row { margin-top: 0; order: 1; flex: none; gap: 6px; }
+  html.fit .player-hint { display: none; }
+  html.fit .ctrl-btn { width: 28px; height: 28px; font-size: .75rem; }
+  html.fit .ctrl-btn.play { width: 32px; height: 32px; }
+  html.fit .counter { min-width: 46px; font-size: .68rem; }
+}
+@media (orientation: landscape) and (max-height: 520px) {
+  html.fit .replay-btn {
+    top: auto; bottom: 6px; right: 8px;
+    width: 30px; height: 30px; padding: 0;
+    font-size: 0;
+    display: inline-flex; align-items: center; justify-content: center;
+    z-index: 51;
+  }
+  html.fit .replay-btn::before { content: "\21BB"; font-size: 1rem; line-height: 1; }
+  html.fit .player { width: min(560px, calc(100vw - 100px)); }
 }

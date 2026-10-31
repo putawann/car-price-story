@@ -1115,6 +1115,21 @@
     if (playing) startDwell();
   }
 
+  /* Re-align to scene `index` without replaying it (used when the layout is re-fitted). */
+  function alignTo(index) {
+    var target = Math.max(0, Math.min(total - 1, index));
+    var scene = scenes[target];
+    if (!scene) return;
+    currentIndex = target;
+    updateCounter();
+    updateDots();
+    if (!playing) setProgress(target, 0);
+    navLockUntil = performance.now() + 400;
+    var top = 0;
+    for (var el = scene; el; el = el.offsetParent) top += el.offsetTop;
+    try { window.scrollTo({ top: top, behavior: "instant" }); } catch (err) { window.scrollTo(0, top); }
+  }
+
   function play() {
     if (playing) return;
     if (ended) {
@@ -1348,6 +1363,7 @@
     next: nextScene,
     prev: prevScene,
     goTo: function (index) { pause(); goTo(index); },
+    align: alignTo,
     get current() { return currentIndex; },
     get total() { return total; },
     get playing() { return playing; }
