@@ -679,7 +679,7 @@
   </section>
 
   <!-- ================= S17 DECISION TREE ================= -->
-  <section class="scene model-scene model-dt" id="s-dt" data-duration="14000" data-title="Decision Tree Regression">
+  <section class="scene model-scene model-dt" id="s-dt" data-duration="9000" data-title="Decision Tree Regression">
     <div class="scene-inner">
       <p class="eyebrow reveal">ผลจากการวิเคราะห์ · 01</p>
       <div class="model-head reveal" style="--d:80">
@@ -705,12 +705,22 @@
           <div id="dt-top5"></div>
         </div>
       </div>
+    </div>
+  </section>
 
-      <div class="model-block reveal" style="--d:500">
+  <section class="scene model-scene model-dt" id="s-dt-2" data-duration="8000" data-title="Decision Tree Regression · 5-fold">
+    <div class="scene-inner">
+      <p class="eyebrow reveal">ผลจากการวิเคราะห์ · 01 · 5-fold CV</p>
+      <div class="model-head reveal" style="--d:80">
+        <h2>Decision Tree Regression</h2>
+        <span class="model-tag">DECISION TREE</span>
+      </div>
+
+      <div class="model-block reveal" style="--d:240">
         <h3>ผล 5-fold CV แยกรายรอบ</h3>
         <div class="model-grid-2">
           <div class="chart-card">
-            <div class="chart" id="dt-fold-chart" role="img" aria-label="กราฟแท่ง MAE ของ Decision Tree แต่ละ fold"></div>
+            <div class="chart" id="dt-fold-chart" role="img" aria-label="กราฟแท่ง MAE ของ Decision Tree Regression แต่ละ fold"></div>
           </div>
           <div>
             <div id="dt-folds"></div>
@@ -718,16 +728,26 @@
           </div>
         </div>
       </div>
+    </div>
+  </section>
 
-      <div class="model-block reveal" style="--d:600">
+  <section class="scene model-scene model-dt" id="s-dt-3" data-duration="8000" data-title="Decision Tree Regression · Training vs Testing">
+    <div class="scene-inner">
+      <p class="eyebrow reveal">ผลจากการวิเคราะห์ · 01 · Training vs Testing</p>
+      <div class="model-head reveal" style="--d:80">
+        <h2>Decision Tree Regression</h2>
+        <span class="model-tag">DECISION TREE</span>
+      </div>
+      <div class="model-block reveal" style="--d:240">
         <h3>5-fold CV เทียบ Test</h3>
         <div id="dt-cv"></div>
+        <div class="pair-bars" id="dt-pair"></div>
       </div>
     </div>
   </section>
 
   <!-- ================= S18 RANDOM FOREST ================= -->
-  <section class="scene model-scene model-rf" id="s-rf" data-duration="14000" data-title="Random Forest Regression">
+  <section class="scene model-scene model-rf" id="s-rf" data-duration="9000" data-title="Random Forest Regression">
     <div class="scene-inner">
       <p class="eyebrow reveal">ผลจากการวิเคราะห์ · 02</p>
       <div class="model-head reveal" style="--d:80">
@@ -743,30 +763,32 @@
         <span class="combo-label">ชุดค่าที่ทดลอง · max_features × min_samples_leaf ส่วน n_estimators ตรวจสอบจากค่า OOB</span>
       </div>
 
-      <div class="model-block reveal" style="--d:300">
-        <h3>OOB MAE ตามจำนวนต้นไม้</h3>
-        <div class="chart-card">
-          <div class="chart" id="rf-oob-chart" role="img" aria-label="กราฟเส้น OOB MAE ตามจำนวนต้นไม้"></div>
-          <p class="chart-caption">เส้นประแนวตั้งที่ 300 ต้น คือจำนวนต้นที่เลือก</p>
-        </div>
-      </div>
-
       <div class="model-grid-2">
-        <div class="model-block reveal" style="--d:380">
+        <div class="model-block reveal" style="--d:320">
           <h3>ไฮเปอร์พารามิเตอร์ที่ทดลองและเลือก</h3>
           <div id="rf-params"></div>
         </div>
-        <div class="model-block reveal" style="--d:460">
+        <div class="model-block reveal" style="--d:400">
           <h3>Top 5 · MAE จาก 5-fold CV ต่ำที่สุด</h3>
           <div id="rf-top5"></div>
         </div>
       </div>
+    </div>
+  </section>
 
-      <div class="model-block reveal" style="--d:540">
+  <section class="scene model-scene model-rf" id="s-rf-2" data-duration="8000" data-title="Random Forest Regression · 5-fold">
+    <div class="scene-inner">
+      <p class="eyebrow reveal">ผลจากการวิเคราะห์ · 02 · 5-fold CV</p>
+      <div class="model-head reveal" style="--d:80">
+        <h2>Random Forest Regression</h2>
+        <span class="model-tag">RANDOM FOREST</span>
+      </div>
+
+      <div class="model-block reveal" style="--d:240">
         <h3>ผล 5-fold CV แยกรายรอบ</h3>
         <div class="model-grid-2">
           <div class="chart-card">
-            <div class="chart" id="rf-fold-chart" role="img" aria-label="กราฟแท่ง MAE ของ Random Forest แต่ละ fold"></div>
+            <div class="chart" id="rf-fold-chart" role="img" aria-label="กราฟแท่ง MAE ของ Random Forest Regression แต่ละ fold"></div>
           </div>
           <div>
             <div id="rf-folds"></div>
@@ -774,16 +796,35 @@
           </div>
         </div>
       </div>
+    </div>
+  </section>
 
-      <div class="model-block reveal" style="--d:620">
+  <section class="scene model-scene model-rf" id="s-rf-3" data-duration="9000" data-title="Random Forest Regression · Training vs Testing">
+    <div class="scene-inner">
+      <p class="eyebrow reveal">ผลจากการวิเคราะห์ · 02 · Training vs Testing</p>
+      <div class="model-head reveal" style="--d:80">
+        <h2>Random Forest Regression</h2>
+        <span class="model-tag">RANDOM FOREST</span>
+      </div>
+      <div class="model-grid-2">
+      <div class="model-block reveal" style="--d:240">
         <h3>5-fold CV เทียบ Test</h3>
         <div id="rf-cv"></div>
+        <div class="pair-bars" id="rf-pair"></div>
+      </div>
+      <div class="model-block reveal" style="--d:320">
+        <h3>OOB MAE ตามจำนวนต้นไม้</h3>
+        <div class="chart-card">
+          <div class="chart" id="rf-oob-chart" role="img" aria-label="กราฟเส้น OOB MAE ตามจำนวนต้นไม้"></div>
+          <p class="chart-caption">เส้นประแนวตั้งที่ 300 ต้น คือจำนวนต้นที่เลือก</p>
+        </div>
+      </div>
       </div>
     </div>
   </section>
 
   <!-- ================= S19 XGBOOST ================= -->
-  <section class="scene model-scene model-xgb" id="s-xgb" data-duration="14000" data-title="XGBoost">
+  <section class="scene model-scene model-xgb" id="s-xgb" data-duration="9000" data-title="XGBoost">
     <div class="scene-inner">
       <p class="eyebrow reveal">ผลจากการวิเคราะห์ · 03</p>
       <div class="model-head reveal" style="--d:80">
@@ -809,8 +850,18 @@
           <div id="xgb-top5"></div>
         </div>
       </div>
+    </div>
+  </section>
 
-      <div class="model-block reveal" style="--d:480">
+  <section class="scene model-scene model-xgb" id="s-xgb-2" data-duration="8000" data-title="XGBoost · 5-fold">
+    <div class="scene-inner">
+      <p class="eyebrow reveal">ผลจากการวิเคราะห์ · 03 · 5-fold CV</p>
+      <div class="model-head reveal" style="--d:80">
+        <h2>XGBoost</h2>
+        <span class="model-tag">XGBOOST</span>
+      </div>
+
+      <div class="model-block reveal" style="--d:240">
         <h3>ผล 5-fold CV แยกรายรอบ</h3>
         <div class="model-grid-2">
           <div class="chart-card">
@@ -822,10 +873,20 @@
           </div>
         </div>
       </div>
+    </div>
+  </section>
 
-      <div class="model-block reveal" style="--d:560">
+  <section class="scene model-scene model-xgb" id="s-xgb-3" data-duration="8000" data-title="XGBoost · Training vs Testing">
+    <div class="scene-inner">
+      <p class="eyebrow reveal">ผลจากการวิเคราะห์ · 03 · Training vs Testing</p>
+      <div class="model-head reveal" style="--d:80">
+        <h2>XGBoost</h2>
+        <span class="model-tag">XGBOOST</span>
+      </div>
+      <div class="model-block reveal" style="--d:240">
         <h3>5-fold CV เทียบ Test</h3>
         <div id="xgb-cv"></div>
+        <div class="pair-bars" id="xgb-pair"></div>
       </div>
     </div>
   </section>
@@ -1041,7 +1102,7 @@
     <button id="prev-btn" class="ctrl-btn" type="button" aria-label="ฉากก่อนหน้า" title="ฉากก่อนหน้า">⏮</button>
     <button id="play-btn" class="ctrl-btn play" type="button" aria-label="เล่นเรื่องราว" title="เล่น / หยุด">▶</button>
     <button id="next-btn" class="ctrl-btn" type="button" aria-label="ฉากถัดไป" title="ฉากถัดไป">⏭</button>
-    <span class="counter" id="scene-counter" aria-live="polite">1 / 27</span>
+    <span class="counter" id="scene-counter" aria-live="polite">1 / 33</span>
     <span class="player-hint">Space เล่น/หยุด · ← → เปลี่ยนฉาก</span>
   </div>
 </div>

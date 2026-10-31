@@ -557,7 +557,6 @@
 
   function animModel(key) {
     var data = DATA[key];
-    var meta = MODEL_META[key];
     var combo = $("#" + key + "-combo");
     if (combo) {
       Charts.countUp(combo, data.combos, {
@@ -566,7 +565,11 @@
         finalText: comma(data.combos)
       });
     }
+  }
 
+  function animModelFolds(key) {
+    var data = DATA[key];
+    var meta = MODEL_META[key];
     var foldValues = data.folds.map(function (row) { return Number(row[1].replace(/,/g, "")); });
     Charts.barChart($("#" + key + "-fold-chart"), {
       labels: data.folds.map(function (row) { return "Fold " + row[0]; }),
@@ -575,6 +578,45 @@
       color: meta.color,
       ariaLabel: "กราฟแท่ง MAE แยกรายรอบของ " + meta.aria
     });
+  }
+
+  function animModelCompare(key) {
+    var data = DATA[key];
+    var meta = MODEL_META[key];
+    var host = $("#" + key + "-pair");
+    if (host) {
+      var vals = [
+        { name: "Training (5-fold CV)", v: cvMae(data, 1), text: data.cv[1][1] },
+        { name: "Testing", v: cvMae(data, 2), text: data.cv[1][2] }
+      ];
+      var maxV = Math.max(vals[0].v, vals[1].v);
+      host.innerHTML = "";
+      var fills = vals.map(function (item, i) {
+        var row = document.createElement("div");
+        row.className = "pair-row";
+        var name = document.createElement("span");
+        name.className = "pair-name";
+        name.textContent = "MAE " + item.name;
+        var track = document.createElement("span");
+        track.className = "bar-track";
+        var fill = document.createElement("span");
+        fill.className = "bar-fill " + key;
+        fill.style.setProperty("--d", String(200 + i * 250));
+        track.appendChild(fill);
+        var val = document.createElement("span");
+        val.className = "bar-value tnum";
+        val.textContent = item.text;
+        row.appendChild(name);
+        row.appendChild(track);
+        row.appendChild(val);
+        host.appendChild(row);
+        return { el: fill, pct: item.v / maxV * 100 };
+      });
+      void host.offsetWidth;
+      later(function () {
+        fills.forEach(function (f) { f.el.style.width = f.pct + "%"; });
+      }, 50);
+    }
 
     if (key === "rf") {
       Charts.lineChart($("#rf-oob-chart"), {
@@ -1247,6 +1289,12 @@
     "s-dt": function () { animModel("dt"); },
     "s-rf": function () { animModel("rf"); },
     "s-xgb": function () { animModel("xgb"); },
+    "s-dt-2": function () { animModelFolds("dt"); },
+    "s-rf-2": function () { animModelFolds("rf"); },
+    "s-xgb-2": function () { animModelFolds("xgb"); },
+    "s-dt-3": function () { animModelCompare("dt"); },
+    "s-rf-3": function () { animModelCompare("rf"); },
+    "s-xgb-3": function () { animModelCompare("xgb"); },
     "s-compare": renderComparison,
     "s-highlight": animHighlight,
     "s-importance": function () {

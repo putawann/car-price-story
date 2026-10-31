@@ -1908,7 +1908,7 @@ p { margin: 0 0 1em; }
   .hero-car { width: min(320px, 80%); }
 }
 @media (min-width: 861px) {
-  .paper-card { height: 212px; }
+  .paper-card { height: 194px; }
   .paper-title { margin: .2rem 0 .25rem; }
   #s-related .narration { margin-bottom: .8rem; }
   #s-app { padding-top: 44px; }
@@ -1924,4 +1924,26 @@ p { margin: 0 0 1em; }
   #s-background .chart-note { margin-top: .5rem; }
   #s-importance .tabs { margin-bottom: .6rem; }
   #s-importance .narration { margin-bottom: .8rem; }
+}
+
+/* ---------- model pages (3 per model) ---------- */
+.pair-bars { margin-top: .9rem; display: grid; gap: .55rem; }
+.pair-row { display: grid; grid-template-columns: 150px minmax(0, 1fr) 64px; gap: .6rem; align-items: center; font-size: .74rem; }
+.pair-name { color: var(--muted); }
+.pair-row .bar-track { height: 16px; }
+@media (max-width: 640px) {
+  .pair-row { grid-template-columns: 1fr 64px; }
+  .pair-row .pair-name { grid-column: 1 / -1; }
+}
+@media (min-width: 861px) {
+  .model-scene .narration { margin-bottom: .5rem; }
+  .model-scene .combo-big { margin: .4rem 0 .6rem; }
+  .model-scene .combo-number { font-size: clamp(1.8rem, 3.2vw, 2.4rem); }
+  .model-scene .model-block { margin-top: .9rem; }
+  .model-scene .data-table th, .model-scene .data-table td { padding: .3em .7em; }
+}
+
+/* keep these denser scenes within one 800px-high screen on desktop */
+@media (min-width: 861px) {
+  #s-related, #s-importance, #s-app { padding-bottom: 100px; }
 }
