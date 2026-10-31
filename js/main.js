@@ -469,6 +469,7 @@
       var label = document.createElement("span");
       label.className = "split-row-label";
       label.textContent = labelText;
+      label.style.setProperty("--c", colors[rowIndex]);
       row.appendChild(label);
       for (var j = 0; j < 10; j++) {
         var dot = document.createElement("span");

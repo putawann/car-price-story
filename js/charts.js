@@ -60,6 +60,30 @@
     return svg;
   }
 
+  /* Size the viewBox to the real box (scale 1) so chart text keeps its pixel size.
+     If the box is narrower than minW the chart keeps minW and scrolls sideways. */
+  function fitSize(container, minW, defW, defH, minH) {
+    var cw = Math.round(container.clientWidth || 0);
+    if (!cw) return { W: defW, H: defH, scroll: false };
+    var probe = document.createElement("svg");
+    var mh = 0;
+    try {
+      container.appendChild(probe);
+      mh = parseFloat(getComputedStyle(probe).maxHeight);
+      container.removeChild(probe);
+    } catch (err) { mh = 0; }
+    var H = mh > 0 ? Math.max(minH, Math.min(defH + 40, Math.round(mh))) : defH;
+    return { W: Math.max(cw, minW), H: H, scroll: cw < minW };
+  }
+
+  function finishSvg(container, svg, f) {
+    if (!f.scroll) return;
+    svg.style.width = f.W + "px";
+    svg.style.maxWidth = "none";
+    svg.style.maxHeight = "none";
+    container.style.overflowX = "auto";
+  }
+
   function animateIn(node, frames, options) {
     if (!node || !node.animate) return;
     if (motionOff()) return;
@@ -71,13 +95,17 @@
      --------------------------------------------------------- */
   function lineChart(container, opts) {
     if (!container) return;
-    var W = 720, H = 320, L = 58, R = 26, T = 36, B = 48;
+    var L = 60, R = 30, T = 36, B = 48;
     var labels = opts.labels || [];
     var values = opts.values || [];
     var color = opts.color || COLORS.blue;
     var format = opts.format || function (v) { return comma(v); };
     var points = opts.points !== false;
+    var dense = values.length >= 8;
+    var fit = fitSize(container, values.length * (dense ? 40 : 56) + L + R, 600, 290, 200);
+    var W = fit.W, H = fit.H;
     var svg = makeSvg(container, opts.ariaLabel || "กราฟเส้น", W, H);
+    finishSvg(container, svg, fit);
     var plotW = W - L - R;
     var plotH = H - T - B;
     var min = Math.min.apply(null, values);
@@ -121,7 +149,7 @@
       }));
       append(svg, E("text", {
         x: L - 10, y: gy + 4, "text-anchor": "end",
-        "font-family": "Prompt, sans-serif", "font-size": "11", fill: COLORS.muted
+        "font-family": "Prompt, sans-serif", "font-size": "13.5", fill: COLORS.muted
       }, tickFormat(gv)));
     }
 
@@ -129,14 +157,14 @@
     labels.forEach(function (label, i) {
       append(svg, E("text", {
         x: xAt(i), y: H - B + 24, "text-anchor": "middle",
-        "font-family": "Prompt, sans-serif", "font-size": "12", fill: COLORS.muted
+        "font-family": "Prompt, sans-serif", "font-size": "13", fill: COLORS.muted
       }, label));
     });
 
     if (opts.xLabel) {
       append(svg, E("text", {
         x: L + plotW / 2, y: H - 8, "text-anchor": "middle",
-        "font-family": "Prompt, sans-serif", "font-size": "11", fill: "#93A7B9"
+        "font-family": "Prompt, sans-serif", "font-size": "13", fill: "#7F95A8"
       }, opts.xLabel));
     }
 
@@ -172,14 +200,17 @@
 
     /* points + value labels */
     var pointGroup = E("g");
+    /* when neighbouring labels would collide, put every second label under its point */
+    var stagger = dense;
     values.forEach(function (v, i) {
       var cx = xAt(i), cy = yAt(v);
       var circle = E("circle", {
         cx: cx, cy: cy, r: 4.6, fill: "#fff", stroke: color, "stroke-width": 2.6
       });
       var label = E("text", {
-        x: cx, y: cy - 12, "text-anchor": "middle",
-        "font-family": "Prompt, sans-serif", "font-size": points ? "11" : "0",
+        x: i === 0 ? cx - 4 : i === n - 1 ? cx + 4 : cx, y: stagger && i % 2 === 1 ? cy + 21 : cy - 12,
+        "text-anchor": i === 0 ? "start" : i === n - 1 ? "end" : "middle",
+        "font-family": "Prompt, sans-serif", "font-size": points ? "13" : "0",
         "font-weight": "600", fill: COLORS.navy
       }, format(v));
       if (!points) label.setAttribute("opacity", "0");
@@ -199,7 +230,7 @@
       var annColor = opts.annotation.color || "#C4651D";
       var annGroup = E("g", { opacity: motionOff() ? 1 : 0 });
       var text = opts.annotation.text || "";
-      var tw = text.length * 7.4 + 22;
+      var tw = text.length * 8 + 24;
       var tx = Math.max(L + 4, Math.min(W - R - tw, ax - tw / 2));
       var ty = Math.max(T + 4, ay - 54);
       var seg = opts.annotation.segment;
@@ -223,7 +254,7 @@
         );
       } else {
         append(annGroup, E("line", {
-          x1: ax, y1: ay - 22, x2: ax, y2: T + plotH,
+          x1: ax, y1: ay + 8, x2: ax, y2: T + plotH,
           stroke: annColor, "stroke-width": 1.4, "stroke-dasharray": "5 5", opacity: ".7"
         }));
       }
@@ -234,7 +265,7 @@
         }),
         E("text", {
           x: tx + tw / 2, y: ty + 16, "text-anchor": "middle",
-          "font-family": "Prompt, sans-serif", "font-size": "11.5",
+          "font-family": "Prompt, sans-serif", "font-size": "13",
           "font-weight": "600", fill: annColor
         }, text)
       );
@@ -250,15 +281,22 @@
      --------------------------------------------------------- */
   function barChart(container, opts) {
     if (!container) return;
-    var W = 720, H = 300, L = 56, R = 24, T = 34, B = 46;
+    var L = 58, R = 76, T = 34, B = 46;
     var labels = opts.labels || [];
     var values = opts.values || [];
     var color = opts.color || COLORS.blue;
+    var fit = fitSize(container, 410, 560, 270, 200);
+    var W = fit.W, H = fit.H;
     var svg = makeSvg(container, opts.ariaLabel || "กราฟแท่ง", W, H);
+    finishSvg(container, svg, fit);
     var plotW = W - L - R;
     var plotH = H - T - B;
     var max = Math.max.apply(null, values.concat([opts.mean || 0]));
-    var yMax = max * 1.16;
+    var rawStep = (max * 1.1) / 4;
+    var mag = Math.pow(10, Math.floor(Math.log(rawStep) / Math.LN10));
+    var step = mag;
+    [1, 2, 2.5, 5, 10].some(function (m) { step = m * mag; return step >= rawStep; });
+    var yMax = step * 4;
     var n = values.length;
     var slot = plotW / n;
     var bw = Math.min(64, slot * 0.5);
@@ -267,7 +305,7 @@
     function yAt(v) { return T + plotH - (v / yMax) * plotH; }
 
     for (var g = 0; g <= 4; g++) {
-      var gv = (yMax * g) / 4;
+      var gv = step * g;
       var gy = yAt(gv);
       append(svg, E("line", {
         x1: L, y1: gy, x2: W - R, y2: gy,
@@ -275,7 +313,7 @@
       }));
       append(svg, E("text", {
         x: L - 10, y: gy + 4, "text-anchor": "end",
-        "font-family": "Prompt, sans-serif", "font-size": "10.5", fill: COLORS.muted
+        "font-family": "Prompt, sans-serif", "font-size": "13", fill: COLORS.muted
       }, comma(gv)));
     }
 
@@ -294,12 +332,12 @@
       append(svg, rect,
         E("text", {
           x: cx, y: y - 9, "text-anchor": "middle",
-          "font-family": "Prompt, sans-serif", "font-size": "11",
+          "font-family": "Prompt, sans-serif", "font-size": "13",
           "font-weight": "600", fill: COLORS.navy
         }, comma(v)),
         E("text", {
           x: cx, y: H - B + 24, "text-anchor": "middle",
-          "font-family": "Prompt, sans-serif", "font-size": "12", fill: COLORS.muted
+          "font-family": "Prompt, sans-serif", "font-size": "14", fill: COLORS.muted
         }, labels[i])
       );
       if (!motionOff() && rect.animate) {
@@ -317,10 +355,15 @@
           stroke: COLORS.navy, "stroke-width": 1.5, "stroke-dasharray": "6 5", opacity: ".75"
         }),
         E("text", {
-          x: W - R, y: my - 7, "text-anchor": "end",
-          "font-family": "Prompt, sans-serif", "font-size": "10.5",
+          x: W - R + 8, y: my - 2, "text-anchor": "start",
+          "font-family": "Prompt, sans-serif", "font-size": "13",
           fill: COLORS.navy
-        }, "mean " + comma(mean))
+        }, "mean"),
+        E("text", {
+          x: W - R + 8, y: my + 14, "text-anchor": "start",
+          "font-family": "Prompt, sans-serif", "font-size": "13",
+          "font-weight": "600", fill: COLORS.navy
+        }, comma(mean))
       );
     }
   }

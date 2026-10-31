@@ -51,9 +51,9 @@
             <circle class="car-wheel" cx="352" cy="166" r="22" fill="#17507F"/>
             <circle class="car-wheel" cx="352" cy="166" r="9" fill="#DCEBF8"/>
             <g class="price-tag">
-              <rect x="330" y="16" width="168" height="52" rx="26" fill="#ffffff" stroke="#2F80ED" stroke-width="2"/>
-              <text x="414" y="40" text-anchor="middle" font-family="Prompt, sans-serif" font-size="13" fill="#17507F" font-weight="600">ราคาที่สมเหตุสมผล</text>
-              <text x="414" y="57" text-anchor="middle" font-family="Prompt, sans-serif" font-size="11" fill="#5B7086">จากข้อมูลจริง</text>
+              <rect x="306" y="4" width="212" height="72" rx="36" fill="#ffffff" stroke="#2F80ED" stroke-width="2"/>
+              <text x="412" y="37" text-anchor="middle" font-family="Prompt, sans-serif" font-size="19" fill="#17507F" font-weight="600">ราคาที่สมเหตุสมผล</text>
+              <text x="416" y="57" text-anchor="middle" font-family="Prompt, sans-serif" font-size="14" fill="#5B7086">จากข้อมูลจริง</text>
             </g>
           </g>
           <line x1="24" y1="190" x2="496" y2="190" stroke="#BBD9F2" stroke-width="4" stroke-linecap="round" stroke-dasharray="16 16" class="road-dash"/>
@@ -369,6 +369,7 @@
           <span class="num">01</span>
           <h3>Decision Tree Regression</h3>
           <p class="method-desc">การทำนายผลโดยใช้โครงสร้างต้นไม้ตัดสินใจ ตัวแบบจะแบ่งข้อมูลออกเป็นกิ่งก้านตามเงื่อนไขต่างๆ เพื่อหาคำตอบ ทำให้เข้าใจกระบวนการทำงานได้ง่าย</p>
+          <button type="button" class="play-open" data-play="dt" aria-label="ลองเล่น: เดินตามต้นไม้ตัดสินใจ">🎮 ลองเล่น: เดินตามต้นไม้</button>
           <div class="mini-stage">
             <span class="demo-badge">ตัวอย่าง</span>
             <div class="mini-tree">
@@ -391,6 +392,7 @@
           <span class="num">02</span>
           <h3>Random Forest Regression</h3>
           <p class="method-desc">ประยุกต์ใช้เทคนิคการเรียนรู้ที่สร้างจากต้นไม้ตัดสินใจหลายต้นร่วมกัน โดยมีการปรับแต่งค่าไฮเปอร์พารามิเตอร์ผ่าน GridSearchCV</p>
+          <button type="button" class="play-open" data-play="rf" aria-label="ลองเล่น: ปลูกต้นไม้ใน Random Forest">🎮 ลองเล่น: ปลูกป่า</button>
           <div class="mini-stage">
             <span class="demo-badge">ตัวอย่าง</span>
             <div class="rf-stage">
@@ -417,6 +419,7 @@
           <span class="num">03</span>
           <h3>XGBoost</h3>
           <p class="method-desc">ตัวแบบต้นไม้ตัดสินใจที่ใช้เทคนิค Boosting โดยให้ต้นไม้ต้นใหม่คอยเรียนรู้และแก้ไขข้อผิดพลาดจากต้นไม้ต้นก่อนหน้า จัดการกับชุดข้อมูลที่มีความซับซ้อนได้เป็นอย่างดี</p>
+          <button type="button" class="play-open" data-play="xgb" aria-label="ลองเล่น: เพิ่มต้นไม้ใน XGBoost ทีละรอบ">🎮 ลองเล่น: เพิ่มต้นไม้ทีละรอบ</button>
           <div class="mini-stage">
             <span class="demo-badge">ตัวอย่าง</span>
             <div class="xgb-stage">
@@ -462,6 +465,7 @@
         </div>
       </div>
       <p class="chart-note reveal" style="--d:700">จุดสีต่างๆ คือตัวอย่างรถ 4 รุ่น (ตัวอย่าง) — จากแต่ละชั้น ประมาณ 80% ไปชุดฝึก และ 20% ไปชุดทดสอบ โดยรักษาสัดส่วนสีไว้</p>
+      <div class="play-row reveal" style="--d:800"><button type="button" class="play-open" data-play="split" aria-label="ลองเล่น: เปรียบเทียบการสุ่มธรรมดากับแบบแบ่งชั้น">🎮 ลองเล่น: สุ่มธรรมดา vs แบ่งชั้น</button></div>
     </div>
   </section>
 
@@ -488,6 +492,7 @@
             <span class="gp" style="--i:20"></span><span class="gp" style="--i:21"></span><span class="gp" style="--i:22"></span><span class="gp" style="--i:23"></span><span class="gp" style="--i:24"></span>
           </div>
           <p class="floor-note">จุดสีเข้มคือค่าที่ให้ผลดีที่สุดบนตารางที่ลอง</p>
+          <button type="button" class="play-open" data-play="grid" aria-label="ลองเล่น: Grid Search">🎮 ลองเล่น: Grid Search</button>
         </div>
 
         <div class="reveal" style="--d:420">
@@ -525,6 +530,7 @@
               Performance = <span class="frac"><span>1</span><span>5</span></span> Σ Performance<sub>i</sub>
             </div>
           </div>
+          <button type="button" class="play-open" data-play="kfold" aria-label="ลองเล่น: K-Fold Cross Validation">🎮 ลองเล่น: K-Fold</button>
         </div>
       </div>
     </div>
