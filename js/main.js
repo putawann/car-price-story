@@ -298,12 +298,12 @@
     var topRows = data.top5.map(function (row) { return row.slice(0, meta.topCols); });
     renderTable(ids.top5, meta.topHead, topRows, { bestRow: true, numCols: meta.topNum });
 
-    renderTable(ids.cv, ["Metric", "Training (5-fold CV)", "Testing"], data.cv, { numCols: [1, 2] });
+    renderTable(ids.cv, ["Metric", "5-fold CV (บนชุดฝึก)", "Testing"], data.cv, { numCols: [1, 2] });
     var cvHost = $(ids.cv);
     if (cvHost) {
       var cvNote = document.createElement("p");
       cvNote.className = "floor-note cv-note";
-      cvNote.textContent = "ค่า MAE ของ Training กับ Testing ใกล้เคียงกัน จึงไม่เกิด Overfitting";
+      cvNote.textContent = "5-fold CV คือผลบนส่วนที่กันไว้ตรวจสอบในแต่ละรอบของชุดฝึก ไม่ใช่คะแนนบนแถวที่ใช้ฝึกโมเดล";
       cvHost.appendChild(cvNote);
     }
 
@@ -587,7 +587,7 @@
     var host = $("#" + key + "-pair");
     if (host) {
       var vals = [
-        { name: "Training (5-fold CV)", v: cvMae(data, 1), text: data.cv[1][1] },
+        { name: "5-fold CV", v: cvMae(data, 1), text: data.cv[1][1] },
         { name: "Testing", v: cvMae(data, 2), text: data.cv[1][2] }
       ];
       var maxV = Math.max(vals[0].v, vals[1].v);
@@ -802,13 +802,19 @@
 
   function animConclusion() {
     Charts.countUp($("#concl-mae"), DATA.conclusion.mae, {
-      duration: 1600, delay: 300, finalText: "51,271"
+      duration: 1600, delay: 300, finalText: comma(DATA.conclusion.mae)
     });
     Charts.countUp($("#concl-pct"), DATA.conclusion.percent, {
-      duration: 1600, delay: 500, decimals: 2, suffix: "%", finalText: "94.23"
+      duration: 1600, delay: 500, decimals: 2, suffix: "%"
     });
     Charts.countUp($("#concl-r2"), DATA.conclusion.r2, {
-      duration: 1600, delay: 700, decimals: 4, finalText: "0.9423"
+      duration: 1600, delay: 700, decimals: 4, finalText: DATA.conclusion.r2.toFixed(4)
+    });
+    Charts.countUp($("#concl-rmse"), DATA.conclusion.rmse, {
+      duration: 1600, delay: 500, finalText: comma(DATA.conclusion.rmse)
+    });
+    Charts.countUp($("#concl-mape"), DATA.conclusion.mape, {
+      duration: 1600, delay: 700, decimals: 2, suffix: "%"
     });
   }
 
@@ -973,7 +979,19 @@
     link.target = "_blank";
     link.rel = "noopener";
     link.textContent = "เปิดเว็บแอป →";
+    var qrLink = document.createElement("a");
+    qrLink.href = APP_URL;
+    qrLink.target = "_blank";
+    qrLink.rel = "noopener";
+    qrLink.className = "app-qr-link";
+    var qr = document.createElement("img");
+    qr.src = "assets/webapp-qr.png";
+    qr.width = 164;
+    qr.height = 164;
+    qr.alt = "คิวอาร์โค้ดเข้าเว็บประเมินราคารถยนต์มือสอง";
+    qrLink.appendChild(qr);
     card.appendChild(title);
+    card.appendChild(qrLink);
     card.appendChild(link);
     host.appendChild(card);
   }

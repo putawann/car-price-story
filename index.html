@@ -8,11 +8,11 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/style.css?v=20261102">
 <link rel="stylesheet" href="css/play.css">
-<script src="js/data.js" defer></script>
+<script src="js/data.js?v=20261102" defer></script>
 <script src="js/charts.js" defer></script>
-<script src="js/main.js" defer></script>
+<script src="js/main.js?v=20261102" defer></script>
 <script src="js/fit.js" defer></script>
 <script src="js/play-models.js" defer></script>
 <script src="js/play-metrics.js" defer></script>
@@ -100,7 +100,7 @@
       <div class="price-layout">
         <div class="chart-card reveal" style="--d:360">
           <div class="chart" id="price-chart" role="img" aria-label="กราฟเส้นดัชนีราคารถยนต์มือสอง ปี 2563 ถึง 2568"></div>
-          <p class="chart-caption">ดัชนีราคารถยนต์มือสอง พ.ศ. 2563–2568 · กำหนดปีฐาน พ.ศ. 2558 = 100</p>
+          <p class="chart-caption">ดัชนีราคารถยนต์มือสอง ณ เดือนพฤษภาคม พ.ศ. 2563–2568 · กำหนดปีฐาน พ.ศ. 2558 = 100</p>
         </div>
         <aside class="price-callout reveal" style="--d:2300" aria-label="คำถามที่งานนี้อยากตอบ">
           <span class="callout-eyebrow">คำถามที่งานนี้อยากตอบ</span>
@@ -156,41 +156,44 @@
   <section class="scene" id="s-scope" data-duration="9500" data-title="ขอบเขตงานวิจัย">
     <div class="scene-inner">
       <p class="eyebrow reveal">ขอบเขตงานวิจัย</p>
-      <h2 class="scene-title reveal" style="--d:80">ทำที่ไหน ด้วยอะไร และนานแค่ไหน</h2>
+      <h2 class="scene-title reveal" style="--d:80">ข้อมูล ตัวแบบ และขอบเขตการใช้งาน</h2>
       <p class="narration reveal" style="--d:160">
         ขอบเขตที่ชัดเจนช่วยให้รู้ว่าผลการศึกษานี้ครอบคลุมอะไร และนำไปใช้ต่อในบริบทใดได้บ้าง
       </p>
       <div class="info-grid">
         <article class="info-card reveal" style="--d:260">
-          <span class="icon-badge" aria-hidden="true">📍</span>
+          <span class="icon-badge" aria-hidden="true">01</span>
           <div>
-            <h4>สถานที่ทำการวิจัย</h4>
-            <p>ห้องปฏิบัติการคอมพิวเตอร์ ภาควิชาสถิติ คณะวิทยาศาสตร์ มหาวิทยาลัยเกษตรศาสตร์ และที่พักของผู้วิจัย</p>
+            <h4>ชุดข้อมูล</h4>
+            <p>ประกาศขายรถยนต์มือสองจาก Kaidee.com และ One2Car.com ที่มีอยู่ล่าสุด ณ วันที่ 30 กันยายน 2569</p>
           </div>
         </article>
         <article class="info-card reveal" style="--d:400">
-          <span class="icon-badge" aria-hidden="true">⌨</span>
+          <span class="icon-badge" aria-hidden="true">02</span>
           <div>
-            <h4>เครื่องมือที่ใช้</h4>
-            <p>โปรแกรมสำหรับการเขียน Python, Microsoft Excel และ Microsoft Word</p>
+            <h4>ตัวแบบประเมินราคา 3 วิธี</h4>
+            <p>Decision Tree Regression, Random Forest Regression และ XGBoost</p>
           </div>
         </article>
         <article class="info-card reveal" style="--d:540">
-          <span class="icon-badge" aria-hidden="true">🗓</span>
+          <span class="icon-badge" aria-hidden="true">03</span>
           <div>
-            <h4>ระยะเวลาดำเนินการ</h4>
-            <p>กรกฎาคม พ.ศ. 2569 – พฤศจิกายน พ.ศ. 2569 (ประมาณ 5 เดือน)</p>
+            <h4>การเปรียบเทียบประสิทธิภาพ</h4>
+            <p>ใช้ค่า R², MAE, RMSE และ MAPE เพื่อเปรียบเทียบผลของทั้ง 3 ตัวแบบ</p>
           </div>
         </article>
-        <article class="info-card wide reveal" style="--d:680">
-          <span class="icon-badge" aria-hidden="true">🌐</span>
+        <article class="info-card reveal" style="--d:680">
+          <span class="icon-badge" aria-hidden="true">04</span>
           <div>
-            <h4>ข้อมูลมาจากไหน / เก็บอย่างไร</h4>
-            <ul class="scope-source-list">
-              <li>เก็บด้วย Web Scraping จากเว็บไซต์ Kaidee.com และ One2Car.com</li>
-              <li>ประกาศขายที่มีอยู่ ณ วันที่ 30 กันยายน 2569</li>
-              <li>หลังทำความสะอาดเหลือ N = 46,074 รายการ</li>
-            </ul>
+            <h4>ความสำคัญของตัวแปร</h4>
+            <p>วัดความสำคัญของตัวแปรในแต่ละตัวแบบด้วยวิธี Permutation Importance</p>
+          </div>
+        </article>
+        <article class="info-card reveal" style="--d:820">
+          <span class="icon-badge" aria-hidden="true">05</span>
+          <div>
+            <h4>Web Application</h4>
+            <p>พัฒนาเว็บประเมินราคาด้วยภาษา HTML, CSS และ JavaScript</p>
           </div>
         </article>
       </div>
@@ -331,7 +334,7 @@
           <div class="rule-row reveal" style="--d:700"><span class="rule-icon" aria-hidden="true">✓</span>ลบข้อมูลซ้ำ</div>
           <div class="rule-row reveal" style="--d:830"><span class="rule-icon" aria-hidden="true">✓</span>ลบข้อมูลที่มีค่าว่างหรือค่าผิดปกติ</div>
           <div class="rule-row reveal" style="--d:960"><span class="rule-icon" aria-hidden="true">✓</span>ตัดรุ่นรถที่มีจำนวนน้อยกว่า 50 คัน</div>
-          <div class="rule-row reveal" style="--d:1090"><span class="rule-icon" aria-hidden="true">✓</span>ใช้ข้อมูลที่ตรงตามเงื่อนไข: อายุรถยนต์ 0-20 ปี, ระยะทางที่วิ่งหรือเลขไมล์ไม่เกิน 300,000, ขนาดเครื่องยนต์ 1000–3500 ซีซี</div>
+          <div class="rule-row reveal" style="--d:1090"><span class="rule-icon" aria-hidden="true">✓</span>ใช้ข้อมูลที่ตรงตามเงื่อนไข: อายุรถยนต์ 0-20 ปี, ระยะทางที่วิ่งหรือเลขไมล์ไม่เกิน 300,000, ขนาดเครื่องยนต์ 1000–3500 ซีซี และราคาไม่เกิน 2,000,000 บาท</div>
         </div>
         <div class="n-result reveal" style="--d:1300">N = <span id="data-count" class="tnum">46,074</span>
           <small>จำนวนรายการหลังทำความสะอาด · เก็บข้อมูลหน้าเว็บไซต์ล่าสุดวันที่ 30 กันยายน 2569</small>
@@ -369,7 +372,7 @@
         <article class="method-card model-dt reveal" style="--d:260">
           <span class="num">01</span>
           <h3>Decision Tree Regression</h3>
-          <p class="method-desc">การทำนายผลโดยใช้โครงสร้างต้นไม้ตัดสินใจ ตัวแบบจะแบ่งข้อมูลออกเป็นกิ่งก้านตามเงื่อนไขต่างๆ เพื่อหาคำตอบ ทำให้เข้าใจกระบวนการทำงานได้ง่าย</p>
+          <p class="method-desc">แบ่งข้อมูลออกเป็นกลุ่มย่อยทีละขั้นตามเงื่อนไขของตัวแปร แล้วทำนายค่าจากค่าเฉลี่ยของข้อมูลในกลุ่มสุดท้าย เข้าใจและตีความได้ง่าย</p>
           <button type="button" class="play-open" data-play="dt" aria-label="ลองเล่น: เดินตามต้นไม้ตัดสินใจ">🎮 ลองเล่น: เดินตามต้นไม้</button>
           <div class="mini-stage">
             <span class="demo-badge">ตัวอย่าง</span>
@@ -392,7 +395,7 @@
         <article class="method-card model-rf reveal" style="--d:420">
           <span class="num">02</span>
           <h3>Random Forest Regression</h3>
-          <p class="method-desc">ประยุกต์ใช้เทคนิคการเรียนรู้ที่สร้างจากต้นไม้ตัดสินใจหลายต้นร่วมกัน โดยมีการปรับแต่งค่าไฮเปอร์พารามิเตอร์ผ่าน GridSearchCV</p>
+          <p class="method-desc">สร้างต้นไม้ตัดสินใจหลายต้นจากข้อมูลและตัวแปรที่สุ่มมาแตกต่างกัน แล้วนำผลทำนายของทุกต้นมาเฉลี่ย ช่วยลดความคลาดเคลื่อนของต้นไม้ต้นเดียว</p>
           <button type="button" class="play-open" data-play="rf" aria-label="ลองเล่น: ปลูกต้นไม้ใน Random Forest">🎮 ลองเล่น: ปลูกป่า</button>
           <div class="mini-stage">
             <span class="demo-badge">ตัวอย่าง</span>
@@ -419,7 +422,7 @@
         <article class="method-card model-xgb reveal" style="--d:580">
           <span class="num">03</span>
           <h3>XGBoost</h3>
-          <p class="method-desc">ตัวแบบต้นไม้ตัดสินใจที่ใช้เทคนิค Boosting โดยให้ต้นไม้ต้นใหม่คอยเรียนรู้และแก้ไขข้อผิดพลาดจากต้นไม้ต้นก่อนหน้า จัดการกับชุดข้อมูลที่มีความซับซ้อนได้เป็นอย่างดี</p>
+          <p class="method-desc">สร้างต้นไม้ทีละต้นต่อเนื่องกัน โดยต้นใหม่เรียนรู้จากส่วนที่ต้นก่อนหน้ายังทำนายผิด และมีการควบคุมความซับซ้อนเพื่อลด Overfitting</p>
           <button type="button" class="play-open" data-play="xgb" aria-label="ลองเล่น: เพิ่มต้นไม้ใน XGBoost ทีละรอบ">🎮 ลองเล่น: เพิ่มต้นไม้ทีละรอบ</button>
           <div class="mini-stage">
             <span class="demo-badge">ตัวอย่าง</span>
@@ -466,6 +469,7 @@
         </div>
       </div>
       <p class="chart-note reveal" style="--d:700">จุดสีต่างๆ คือตัวอย่างรถ 4 รุ่น (ตัวอย่าง) — จากแต่ละชั้น ประมาณ 80% ไปชุดฝึก และ 20% ไปชุดทดสอบ โดยรักษาสัดส่วนสีไว้</p>
+      <p class="chart-note reveal source-discrepancy" style="--d:750">หมายเหตุวิธีวิจัย: ภาพ 80:20 นี้แสดงตามสไลด์หน้า 7 และ 14 แต่โค้ดโมเดลรุ่น 5 ที่ให้ผลในเว็บแบ่งชุดฝึก 80% / ชุดตรวจสอบ 10% / ชุดทดสอบ 10% (36,859 / 4,607 / 4,608 แถว) โดยแบ่งชั้นตามคู่ยี่ห้อ–รุ่น ไม่ใช้ชุดทดสอบเลือกพารามิเตอร์</p>
       <div class="play-row reveal" style="--d:800"><button type="button" class="play-open" data-play="split" aria-label="ลองเล่น: เปรียบเทียบการสุ่มธรรมดากับแบบแบ่งชั้น">🎮 ลองเล่น: สุ่มธรรมดา vs แบ่งชั้น</button></div>
     </div>
   </section>
@@ -1017,15 +1021,15 @@
         <div class="app-result reveal" style="--d:420">
           <p class="small muted" style="margin-bottom:.2rem">ราคาโดยประมาณ</p>
           <div class="price-big tnum"><span id="app-price">651,000</span> <small>บาท</small></div>
-          <p class="price-range tnum">ช่วงราคาสมเหตุสมผล (±8%) <strong>599,000 – 703,000</strong></p>
+          <p class="price-range tnum">ช่วงราคาแสดงผล (±8%) <strong>599,000 – 703,000</strong></p>
           <p class="small muted">TOYOTA CAMRY · 2018 · 80,000 km</p>
           <p class="small muted">กราฟราคา 5 ปีข้างหน้า 2026 → 2031 (651,000 → 321,000) สมมติขับปีละ 15,000 กม.</p>
           <div class="note">
             <span id="app-note">โมเดล XGBoost ที่เทรนจากชุดข้อมูล v5 (R² ทดสอบ 0.946, MAE ประมาณ 51,000 บาท)</span>
           </div>
+          <div id="app-link" class="app-link"></div>
         </div>
       </div>
-      <div id="app-link" class="app-link"></div>
     </div>
   </section>
 
@@ -1033,56 +1037,66 @@
   <section class="scene" id="s-conclusion" data-duration="15000" data-title="สรุปผล">
     <div class="scene-inner">
       <p class="eyebrow reveal">สรุปผลจากผลการวิเคราะห์</p>
-      <h2 class="scene-title reveal" style="--d:80">สี่ข้อที่ได้เรียนรู้</h2>
+      <h2 class="scene-title reveal" style="--d:80">XGBoost มีประสิทธิภาพสูงสุด</h2>
       <p class="narration reveal" style="--d:160">
-        ตัวเลขสำคัญสามค่าที่สรุปภาพรวมของงานนี้ คือความคลาดเคลื่อนที่ต่ำ การอธิบายความแปรปรวนได้สูง
-        และตัวแบบที่พร้อมนำไปใช้จริง
+        ผลบนชุดข้อมูลทดสอบของตัวแบบที่เลือก แสดงทั้งการอธิบายความแปรปรวน
+        และค่าความคลาดเคลื่อนครบทั้ง 4 ตัวชี้วัด
       </p>
       <div class="conclusion-grid">
         <article class="conclusion-card reveal" style="--d:260">
-          <span class="icon-badge" aria-hidden="true">🏆</span>
-          <h3>1 · ประสิทธิภาพของตัวแบบ</h3>
-          <div class="concl-viz" id="concl-viz-1" aria-hidden="true"></div>
-          <p>XGBoost ดีที่สุด โดย MAE บนชุดทดสอบ <span class="keynum tnum" id="concl-mae">51,271</span> บาท และอธิบายความแปรปรวนได้ <span class="keynum tnum" id="concl-pct">94.23%</span> (R² = <span class="keynum tnum" id="concl-r2">0.9423</span> จาก 5-fold CV) รองลงมาคือ Random Forest และ Decision Tree</p>
+          <h3>R-squared · สัมประสิทธิ์การกำหนด</h3>
+          <p class="summary-number"><span id="concl-pct" class="tnum">94.58%</span></p>
+          <p>อธิบายความแปรปรวนของราคาได้ร้อยละ 94.58<br>R² = <span class="tnum" id="concl-r2">0.9458</span> บนชุดทดสอบ ไม่ใช่ค่าความถูกต้องของราคาทุกคัน</p>
         </article>
         <article class="conclusion-card reveal" style="--d:400">
-          <span class="icon-badge" aria-hidden="true">🛡️</span>
-          <h3>2 · การตรวจสอบ Overfitting</h3>
-          <div class="concl-viz" id="concl-viz-2" aria-hidden="true"></div>
-          <p>ทั้ง 3 วิธีไม่มีปัญหา Overfitting ที่ส่งผลต่อการทำนายข้อมูลใหม่ เพราะ MAE บนชุดทดสอบไม่สูงไปกว่าค่าที่ได้จาก 5-fold Cross-validation</p>
+          <h3>MAE · ความคลาดเคลื่อนสัมบูรณ์เฉลี่ย</h3>
+          <p class="summary-number"><span id="concl-mae" class="tnum">51,271</span> <small>บาท</small></p>
+          <p>ราคาที่ทำนายต่างจากราคาจริงโดยเฉลี่ย เมื่อคิดผลต่างเป็นค่าสัมบูรณ์</p>
         </article>
         <article class="conclusion-card reveal" style="--d:540">
-          <span class="icon-badge" aria-hidden="true">🔍</span>
-          <h3>3 · ปัจจัยที่มีอิทธิพล</h3>
-          <div class="concl-viz" id="concl-viz-3" aria-hidden="true"></div>
-          <p>ขนาดเครื่องยนต์และอายุของรถยนต์สำคัญที่สุด รองลงมาคือยี่ห้อและประเภทของรถ ส่วนระบบเกียร์สำคัญน้อยที่สุดในทุกตัวแบบ</p>
+          <h3>RMSE · รากของความคลาดเคลื่อนกำลังสองเฉลี่ย</h3>
+          <p class="summary-number"><span id="concl-rmse" class="tnum">76,379</span> <small>บาท</small></p>
+          <p>ให้ความสำคัญกับการทำนายที่คลาดเคลื่อนมากเป็นพิเศษ</p>
         </article>
         <article class="conclusion-card reveal" style="--d:680">
-          <span class="icon-badge" aria-hidden="true">🌐</span>
-          <h3>4 · การนำไปประยุกต์ใช้</h3>
-          <div class="concl-flow" aria-hidden="true">
-            <span class="flow-chip xgb">XGBoost</span>
-            <span class="flow-arrow-inline">→</span>
-            <span class="flow-chip">Web Application</span>
-            <span class="flow-arrow-inline">→</span>
-            <span class="flow-chip">ราคาประเมิน</span>
-          </div>
-          <p>นำ XGBoost ซึ่งมีประสิทธิภาพสูงสุดไปพัฒนาเป็นเว็บแอปพลิเคชัน เพื่อช่วยประเมินราคากลางที่สมเหตุสมผลสำหรับผู้ซื้อและผู้ขาย</p>
+          <h3>MAPE · ร้อยละความคลาดเคลื่อนสัมบูรณ์เฉลี่ย</h3>
+          <p class="summary-number"><span id="concl-mape" class="tnum">9.74%</span></p>
+          <p>ความคลาดเคลื่อนสัมบูรณ์เฉลี่ยเมื่อคิดเทียบเป็นร้อยละของราคาจริง</p>
         </article>
       </div>
     </div>
   </section>
 
   <!-- ================= S23b RECOMMENDATIONS ================= -->
-  <section class="scene" id="s-recommendations" data-duration="9000" data-title="ข้อเสนอแนะ">
+  <section class="scene" id="s-recommendations" data-duration="14000" data-title="วิจารณ์และข้อเสนอแนะ">
     <div class="scene-inner">
-      <p class="eyebrow reveal">ข้อเสนอแนะ</p>
-      <h2 class="scene-title reveal" style="--d:80">ก้าวต่อไปของงานนี้</h2>
+      <p class="eyebrow reveal">วิจารณ์และข้อเสนอแนะ</p>
+      <h2 class="scene-title reveal" style="--d:80">ข้อมูลรถไฟฟ้า เศรษฐกิจ และสภาพรถ</h2>
       <p class="narration reveal" style="--d:160">
-        ข้อเสนอแนะทั้งสี่ข้อมาจากข้อจำกัดของข้อมูลและบริบทการใช้งานจริง
-        เป็นแนวทางให้งานถัดไปตอบโจทย์ตลาดรถมือสองได้ครบขึ้น
+        การนำราคาประเมินไปใช้ต้องพิจารณาความครอบคลุมของข้อมูล สภาวะตลาด
+        และคุณภาพรถแต่ละคันร่วมด้วย
       </p>
-      <div class="rec-list" id="rec-list"></div>
+      <div class="discussion-grid">
+        <article class="discussion-card reveal" style="--d:260">
+          <h3>ข้อมูลรถยนต์ไฟฟ้า</h3>
+          <div class="ev-stats">
+            <div><strong class="tnum">40 <small>คัน</small></strong><span>ยอดจดทะเบียนปี 2567</span><p>ข้อมูลยังไม่เพียงพอสำหรับการวิเคราะห์</p></div>
+            <div><strong class="tnum">825 <small>คัน</small></strong><span>คาดการณ์ปี 2568–2570</span><p>ตลาดรถยนต์มือสองโตต่อเนื่อง ต้องเร่งรวบรวมข้อมูล</p></div>
+          </div>
+          <p class="chart-note">ที่มา: DLT, Krungsri Research ตามสไลด์หน้า 33 · ใช้ตัวเลขจากกล่องสรุป ไม่ใช่จำนวนรถในชุดฝึก</p>
+        </article>
+        <article class="discussion-card reveal" style="--d:420">
+          <h3>สภาวะเศรษฐกิจ</h3>
+          <figure class="market-figure">
+            <img src="assets/market-index-2569.png" width="1104" height="616" alt="กราฟดัชนีราคารถยนต์มือสองรายเดือนปี 2569 ระหว่างมกราคมถึงพฤษภาคม จากสไลด์หน้า 33" loading="lazy">
+            <figcaption>ดัชนีราคารถยนต์มือสองรายเดือน ปี 2569 ระหว่างมกราคม–พฤษภาคม · ภาพจากสไลด์หน้า 33</figcaption>
+          </figure>
+        </article>
+        <article class="discussion-card discussion-condition reveal" style="--d:580">
+          <h3>สภาพรถและการต่อรองราคา</h3>
+          <div class="rec-list" id="rec-list"></div>
+        </article>
+      </div>
     </div>
   </section>
 

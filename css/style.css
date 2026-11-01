@@ -1591,6 +1591,8 @@ p { margin: 0 0 1em; }
 }
 .app-link-card h3 { margin: 0; font-size: .98rem; }
 .app-link-btn { font-size: .88rem; padding: .55em 1.2em; }
+.app-qr-link { display: block; flex: 0 0 auto; }
+.app-qr-link img { display: block; width: 164px; height: 164px; }
 
 /* ---------- conclusion ---------- */
 .conclusion-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 14px; }
@@ -1604,6 +1606,29 @@ p { margin: 0 0 1em; }
 .conclusion-card .icon-badge { margin-bottom: .6rem; background: #FFF3E6; color: #C4651D; }
 .conclusion-card h3 { font-size: .92rem; margin-bottom: .35rem; }
 .conclusion-card p { font-size: .82rem; color: var(--muted); margin: 0; }
+.conclusion-card .summary-number { color: var(--navy); font-size: clamp(1.5rem, 3vw, 2.25rem); font-weight: 700; margin: .8rem 0; }
+.summary-number small { font-size: .85rem; font-weight: 400; }
+.discussion-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.discussion-card { min-width: 0; background: #fff; border: 1px solid var(--line); border-radius: 18px; padding: 1.1rem; box-shadow: var(--shadow-sm); }
+.discussion-card h3 { font-size: 1rem; margin-bottom: .7rem; }
+.discussion-card p { font-size: .86rem; color: var(--muted); margin: .65rem 0 0; }
+.discussion-card .chart-note { font-size: .7rem; }
+.discussion-condition { grid-column: 1 / -1; }
+.ev-stats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .7rem; }
+.ev-stats > div { padding: .8rem; border-radius: 12px; background: var(--sky); }
+.ev-stats strong { display: block; color: var(--navy); font-size: 1.9rem; }
+.ev-stats small { font-size: .85rem; }
+.ev-stats span { display: block; font-size: .76rem; color: var(--muted); }
+.market-figure { margin: 0; }
+.market-figure img { display: block; width: 100%; height: auto; }
+.market-figure figcaption { color: var(--muted); font-size: .7rem; margin-top: .4rem; }
+.discussion-condition .rec-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.discussion-condition .rec-item { box-shadow: none; padding: .65rem; }
+.discussion-condition .rec-item p { margin: 0; }
+@media (max-width: 640px) and (orientation: portrait) {
+  .discussion-grid, .discussion-condition .rec-list { grid-template-columns: minmax(0, 1fr); }
+  .app-link-card { justify-content: center; }
+}
 .keynum { font-size: 1.3rem; font-weight: 700; color: var(--blue); font-variant-numeric: tabular-nums; }
 
 /* conclusion mini data visuals */

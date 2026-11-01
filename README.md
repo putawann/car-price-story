@@ -8,7 +8,14 @@
 ดับเบิลคลิก `index.html` ได้เลย (รองรับ `file://`) หรือเปิดผ่านเบราว์เซอร์สมัยใหม่
 ต้องต่ออินเทอร์เน็ตเฉพาะการโหลดฟอนต์ Prompt จาก Google Fonts
 
-ใส่ลิงก์เว็บแอปที่ APP_URL ใน js/data.js
+เว็บนำเสนอ: https://putawann.github.io/car-price-story/
+เว็บประเมินราคา: https://putawann.github.io/webapp_car_used/ (ตั้งไว้ใน `APP_URL` พร้อมคิวอาร์โค้ด)
+
+## ข้อมูลฉบับอัปเดต
+
+เทียบกับ `Presentation 02 Nov 2026 (2).pdf` ครบ 34 หน้า โดยคงผลโมเดลล่าสุดเป็นหลัก
+รายการแก้ไข แหล่งอ้างอิง และข้อขัดแย้งของสไลด์อยู่ใน [SLIDE_UPDATE_AUDIT.md](SLIDE_UPDATE_AUDIT.md)
+ทดสอบเนื้อหาด้วย `node tests/content-check.mjs` (ไม่ต้องติดตั้งแพ็กเกจ)
 
 ## คีย์ลัด
 

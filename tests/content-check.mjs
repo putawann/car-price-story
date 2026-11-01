@@ -1,0 +1,45 @@
+import assert from 'node:assert/strict';
+import {readFileSync, existsSync} from 'node:fs';
+import {fileURLToPath} from 'node:url';
+import path from 'node:path';
+import vm from 'node:vm';
+
+const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+const read = p => readFileSync(path.join(root, p), 'utf8');
+const context = {};
+vm.createContext(context);
+vm.runInContext(read('js/data.js') + ';globalThis.result={DATA,APP_URL};', context);
+const {DATA,APP_URL} = JSON.parse(JSON.stringify(context.result));
+const html = read('index.html');
+const main = read('js/main.js');
+assert.equal((html.match(/<section class="scene[" ]/g)||[]).length, 33);
+assert.equal(DATA.members.length, 5);
+assert.equal(DATA.members.at(-1).id, '6610401195');
+assert.equal(DATA.dataPrep.n, 46074);
+assert.equal(DATA.dataPrep.rules.length, 4);
+assert.match(DATA.dataPrep.rules.at(-1), /2,000,000/);
+assert.deepEqual(DATA.priceIndex.labels, ['พ.ค. 2563','พ.ค. 2564','พ.ค. 2565','พ.ค. 2566','พ.ค. 2567','พ.ค. 2568']);
+assert.equal(DATA.conclusion.r2, 0.9458);
+assert.equal(DATA.conclusion.percent, 94.58);
+assert.equal(DATA.conclusion.mae, 51271);
+assert.equal(DATA.conclusion.rmse, 76379);
+assert.equal(DATA.conclusion.mape, 9.74);
+assert.equal(DATA.conclusion.recommendations.length, 2);
+assert.equal(DATA.xgb.cv[0][1], '0.9423'); // CV, not test R-squared.
+assert.equal(DATA.xgb.cv[0][2], '0.9458');
+assert.equal(DATA.dt.top5[1][4], '57,973'); // Notebook is authoritative over slide typo.
+assert.equal(DATA.importance.deltas.find(x=>x.name==='ระบบเกียร์').dt, 6606);
+assert.equal(DATA.importance.deltas.find(x=>x.name==='ระยะทางที่วิ่งทั้งหมด').dt, 18539);
+assert.equal(DATA.importance.deltas.find(x=>x.name==='ประเภทเชื้อเพลิง').dt, 16336);
+assert.match(main, /5-fold CV \(บนชุดฝึก\)/);
+assert.match(html, /ชุดตรวจสอบ 10% \/ ชุดทดสอบ 10%/);
+assert.match(html, /ช่วงราคาแสดงผล \(±8%\)/);
+assert.match(html, /DLT, Krungsri Research/);
+assert.equal(APP_URL, 'https://putawann.github.io/webapp_car_used/');
+assert.match(html, /40 <small>คัน/);
+assert.match(html, /825 <small>คัน/);
+for (const image of DATA.app.screens) assert.ok(existsSync(path.join(root,image.src)), image.src);
+for (const asset of ['assets/market-index-2569.png','assets/webapp-qr.png','SLIDE_UPDATE_AUDIT.md']) assert.ok(existsSync(path.join(root,asset)), asset);
+const ids = [...html.matchAll(/\bid="([^"]+)"/g)].map(m=>m[1]);
+assert.equal(ids.length,new Set(ids).size,'Duplicate HTML ids');
+console.log('PASS: slide content, latest-model metrics, documented exceptions, 33 scenes, assets and unique IDs');
